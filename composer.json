@@ -3,7 +3,7 @@
     "type": "library",
     "description": "CorePhpSystem - Antiframework for MVC websites inspired by jQuery",
     "keywords": ["mvc"],
-    "homepage": "http://www.smarty.net",
+    "homepage": "https://github.com/stefanmorderca/CorePhpSystem/",
     "license": "GPL-2.0",
     "authors": [
         {
