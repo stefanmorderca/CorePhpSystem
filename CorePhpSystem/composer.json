@@ -1,0 +1,25 @@
+{
+    "name": "corephpsystem/corephpsystem",
+    "type": "library",
+    "description": "CorePhpSystem - Antiframework for MVC websites inspired by jQuery",
+    "keywords": ["mvc"],
+    "homepage": "http://www.smarty.net",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Michał Kozak",
+            "email": "michal@kozak.waw.pl"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/stefanmorderca/CorePhpSystem/issues"
+    },
+    "require": {
+        "php": ">=5.2"
+    },
+    "autoload": {
+        "classmap": [
+            "core/Core.class.php"
+        ]
+    }
+}
