@@ -1,6 +1,6 @@
 <?php
 
-class smartyShutdonwListner implements OnShutdownListner {
+class SmartyShutdonwListner implements OnShutdownListner {
 
     /**
      * @var Smarty
@@ -10,72 +10,47 @@ class smartyShutdonwListner implements OnShutdownListner {
     /**
      * @var SmartyConfigure
      */
-    var $config = array();
+    var $config;
 
     function __construct() {
         
     }
 
     function OnShutdown() {
-        die($this->config->getSmartyLibPath());
         require_once($this->config->getSmartyLibPath());
 
-        $html['template_sticky_notes'] = 1;
-        $html['sticky_notes'] = $jsonNotes;
+        $this->smarty = new Smarty();
 
-        $smarty = new Smarty();
+        $this->smarty->setTemplateDir($this->config->getTemplateDir());
+        $this->smarty->setCompileDir($this->config->getCompileDir());
+        $this->smarty->setCacheDir($this->config->getCacheDir());
+        $this->smarty->setConfigDir($this->config->getConfigDir());
 
-        $theme = 'default';
+        $this->smarty->debugging = false;
 
-        if (isset($_GET['theme']) && file_exists('theme/' . $_GET['theme'])) {
-            $theme = $_GET['theme'];
-            $_SESSION['theme'] = $theme;
-        }
+        $templateVars = $this->config->globalVaraviableNameToAssign;
 
-        if (isset($_SESSION['theme']) && $_SESSION['theme'] != '') {
-            $theme = $_SESSION['theme'];
-        }
+        global $$templateVars;
 
-        $smarty->addPluginsDir('libs/Smarty/plugins');
-        $smarty->setTemplateDir('theme/' . $theme);
-        $smarty->setCompileDir('smarty/compile/' . $theme);
-        $smarty->setCacheDir('smarty/cache/' . $theme);
-        $smarty->setConfigDir('smarty/configs/' . $theme);
-
-        $smarty->debugging = false;
-
-        if (isset($html) && is_array($html)) {
-            foreach ($html as $key => $val) {
-                $smarty->assign($key, $val);
+        if (isset($$templateVars) && is_array($$templateVars)) {
+            foreach ($$templateVars as $key => $val) {
+                $this->smarty->assign($key, $val);
             }
-        }
-
-        $time_stop = microtime(1) - $time_start;
-
-        $smarty->assign('moduleFile', basename($moduleFile));
-        $smarty->assign('auth', $auth);
-        $smarty->assign('t_user', $t_user);
-        $smarty->assign('time_stop', $time_stop);
-        $smarty->assign('template_dir', 'theme/' . $theme);
-
-        if ($_SESSION['debug_mode'] == 1) {
-            $smarty->assign('debug', $debug);
         }
 
         if (isset($smarty_display)) {
-
-            $smarty->assign("inFrame", true);
+            $this->smarty->assign("inFrame", true);
 
             if ($isJson === true) {
                 header('Content-Type: application/json');
-                $html = $smarty->fetch($smarty_display);
+                $html = $this->smarty->fetch($smarty_display);
                 $json = json_encode(array('html' => $html, 'meta' => $html_meta));
                 die($json);
             } else {
-                $smarty->display($smarty_display);
+                $this->smarty->display($smarty_display);
             }
         } else {
-            $smarty->display('index.html');
+            $this->smarty->display('index.html');
         }
     }
 
@@ -83,9 +58,9 @@ class smartyShutdonwListner implements OnShutdownListner {
      * @return SmartyConfigure
      */
     public function configure() {
-        $config = new SmartyConfigure();
+        $this->config = new SmartyConfigure();
 
-        return $config;
+        return $this->config;
     }
 
 }
@@ -101,6 +76,13 @@ class SmartyConfigure {
     var $cacheDir = 'cache';
     var $configDir = 'configs';
     var $debugging = false;
+    var $globalVaraviableNameToAssign = 'smartyAssign';
+
+    public function setAssignSourceValeName($variable_name) {
+        $this->globalVaraviableNameToAssign = $variable_name;
+
+        return $this;
+    }
 
     public function setDebugModeOn() {
         $this->debugging = true;
@@ -127,12 +109,12 @@ class SmartyConfigure {
     }
 
     public function getSmartyLibPath() {
-        return $smartyLibPath;
+        return $this->smartyLibPath;
     }
 
     /**
      * 
-     * @param string $path
+     * @param type $path
      * @return SmartyConfigure
      */
     public function addPluginsDir($path) {
@@ -147,7 +129,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param string $path
+     * @param type $path
      * @return SmartyConfigure
      */
     public function setTemplateDir($path) {
@@ -158,7 +140,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param string $path
+     * @param type $path
      * @return SmartyConfigure
      */
     public function setTemplateName($name = 'default') {
@@ -169,7 +151,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param string $path
+     * @param type $path
      * @return SmartyConfigure
      * @throws Exception
      */
@@ -184,7 +166,11 @@ class SmartyConfigure {
     }
 
     public function getTemplateDir() {
-        return $this->smartyRootDir . "/" . $this->templateName . "/" . $this->templateDir;
+        if ($this->templateDir == '') {
+            return $this->smartyRootDir . "/" . $this->templateName . "/" . $this->templateDir;
+        } else {
+            return $this->templateDir;
+        }
     }
 
     public function getCompileDir() {
@@ -224,11 +210,8 @@ class SmartyConfigure {
         }
 
         if (!file_exists($this->getTemplateDir())) {
+                        die($this->getTemplateDir());
             mkdir($this->getTemplateDir(), 0777);
-        }
-
-        if (!file_exists($this->getTemplateDir())) {
-            mkdir($this->getTemplateDir(), 0755);
         }
 
         if (!file_exists($this->getCompileDir())) {

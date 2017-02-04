@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Project:     CorePphpSyetem: Antiframework for MVC websites inspired by jQuery
  * File:        Core.class.php
@@ -25,7 +26,6 @@
  * @package   CorePhpSystem
  * @version   0.1
  */
-
 include_once 'Db.class.php';
 include_once 'Auth.class.php';
 include_once 'Module.class.php';
@@ -42,7 +42,7 @@ class Core {
      * @var DB
      */
     var $db;
-    
+
     /**
      * 
      *
@@ -65,19 +65,9 @@ class Core {
     }
 
     public function initShutdownFunction() {
+        $shutdownFunction = 'Core::shutdown';
 
-        function shutdown($die = '') {
-            @$resp = $GLOBALS['request'];
-            print_r($resp);
-            var_dump($die);
-            
-            var_dump($onShutdownListner);
-            
-            echo "<br>\n<br>\n";
-            echo 'Script executed with success', PHP_EOL;
-        }
-
-        register_shutdown_function('shutdown');
+        register_shutdown_function($shutdownFunction);
     }
 
     public function initDebugMode() {
@@ -113,6 +103,7 @@ class Core {
 
     public function setShutdownListner(OnShutdownListner $listner) {
         $this->onShutdownListner = $listner;
+        $this->initShutdownFunction();
     }
 
     /**
@@ -128,6 +119,25 @@ class Core {
         return $module;
     }
 
+    static public function shutdown($die = '') {
+        /* @var $request CoreRequest */
+        @$resp = $GLOBALS['request'];
+        /* @var $core Core */
+        @$core = $GLOBALS['core'];
+
+        if ($core->onShutdownListner !== '') {
+            $core->onShutdownListner->OnShutdown();
+            die();
+        }
+
+        print_r($resp);
+        var_dump($die);
+
+        echo "<br>\n<br>\n";
+        echo 'Script executed with success', PHP_EOL;
+
+        echo('END');
+    }
 }
 
 interface OnShutdownListner {
