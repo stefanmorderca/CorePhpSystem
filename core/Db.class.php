@@ -38,6 +38,7 @@ class Db {
         $type_of = 0;
         $ile = 0;
         $index = false;
+        $numrows = false;
 
         if (isset($params['fetch'])) {
             $fetch = $params['fetch'];
@@ -223,7 +224,7 @@ class Db {
 
         $t_time[] = microtime(true);
 
-        $this->logQuery($sql, $t_time, $numrows, $latid);
+        $this->logQuery($sql, $t_time, $numrows, $last_id);
 
         return $t_output;
     }
@@ -390,11 +391,11 @@ class Db {
 
         $time_tin_db = round($time_stop - $time_start, 4);
 
-        $GLOBALS['_DB'][$connname]['counter']['queries'] ++;
-        $GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['query'] = substr($query, 0, 255);
-        $GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['numrows'] = $ile;
-        $GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time'] = $time_total;
-        $GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time_in_db'] = $time_tin_db;
+        @$GLOBALS['_DB'][$connname]['counter']['queries'] ++;
+        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['query'] = substr($query, 0, 255);
+        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['numrows'] = $ile;
+        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time'] = $time_total;
+        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time_in_db'] = $time_tin_db;
     }
 
 }

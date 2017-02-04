@@ -1,15 +1,27 @@
 <?php
 
+/**
+ * Main purpus of this class is as falows:
+ * 1. No GET POST or AJAX - default action
+ * 2. AJAX or NOT
+ * 3. POST or GET
+ */
 class CoreRequest {
 
-    /** REQ * */
-// 1. No GET POST or AJAX - default action
-// 2. AJAX or NOT
-// 3. POST or GET
-
     var $isAjax = false;
+
+    /**
+     * Try tu deteminate if page was opend i HTML frame or iframe element
+     *
+     * @var type 
+     */
     var $isInIframe = false;
-    var $httpMethod = "GET"; // GET, POST, AJAX
+
+    /**
+     *
+     * @var enum  GET|POST|AJAX
+     */
+    var $httpMethod = "GET";
     var $module;
     var $action;
     var $itemId;
