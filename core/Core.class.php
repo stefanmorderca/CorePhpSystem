@@ -42,7 +42,13 @@ class Core {
      * @var DB
      */
     var $db;
-    var $debugMode = false;
+    
+    /**
+     * 
+     *
+     * @var boolean  
+     */
+    var $isDebugModeOn = false;
 
     /**
      *
@@ -64,6 +70,9 @@ class Core {
             @$resp = $GLOBALS['request'];
             print_r($resp);
             var_dump($die);
+            
+            var_dump($onShutdownListner);
+            
             echo "<br>\n<br>\n";
             echo 'Script executed with success', PHP_EOL;
         }
@@ -83,7 +92,7 @@ class Core {
         }
 
         if (isset($_SESSION['debug_mode']) && $_SESSION['debug_mode'] == 1) {
-            $this->debugMode = true;
+            $this->isDebugModeOn = true;
         }
     }
 
@@ -103,7 +112,7 @@ class Core {
     }
 
     public function setShutdownListner(OnShutdownListner $listner) {
-        
+        $this->onShutdownListner = $listner;
     }
 
     /**

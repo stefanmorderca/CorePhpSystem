@@ -132,7 +132,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param type $path
+     * @param string $path
      * @return SmartyConfigure
      */
     public function addPluginsDir($path) {
@@ -147,7 +147,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param type $path
+     * @param string $path
      * @return SmartyConfigure
      */
     public function setTemplateDir($path) {
@@ -158,7 +158,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param type $path
+     * @param string $path
      * @return SmartyConfigure
      */
     public function setTemplateName($name = 'default') {
@@ -169,7 +169,7 @@ class SmartyConfigure {
 
     /**
      * 
-     * @param type $path
+     * @param string $path
      * @return SmartyConfigure
      * @throws Exception
      */
@@ -222,7 +222,7 @@ class SmartyConfigure {
         if (!file_exists($this->getTemplateMainDir())) {
             mkdir($this->getTemplateMainDir(), 0755);
         }
-        
+
         if (!file_exists($this->getTemplateDir())) {
             mkdir($this->getTemplateDir(), 0777);
         }
