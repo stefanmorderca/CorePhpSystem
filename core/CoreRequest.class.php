@@ -15,7 +15,7 @@ class CoreRequest {
     var $itemId;
     var $t_log = array();
 
-    public function CoreRequest(Module $module) {
+    public function CoreRequest(Module $module, $action = '') {
         $this->isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') ? true : false;
         $this->action = ($module->isInActionList($action)) ? $action : $module->actionDefault;
 
