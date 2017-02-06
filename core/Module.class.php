@@ -31,6 +31,24 @@ class Module {
         // is String - tworzę nową akcję o nazwie takiej jak String
         // is ModuleAction - dodaje akcję
         // is String[] - tworzę listę akcji na podstawie tablicy
+
+        if (is_object($action) && get_class($action)) {
+            
+        }
+
+        if (is_string($action)) {
+            $t_actions = array($action);
+        }
+
+        if (is_array($action)) {
+            $t_actions = $action;
+        }
+
+
+
+        if (is_array($t_actions)) {
+            
+        }
     }
 
     public function setDefaultAction($action) {
