@@ -33,28 +33,29 @@ class Module {
         // is String[] - tworzę listę akcji na podstawie tablicy
 
         if (is_object($action) && get_class($action)) {
-            
+            if (!$this->isInActionList($action->name)) {
+                $this->actionList[] = $action;
+                return;
+            }
         }
 
         if (is_string($action)) {
-            $t_actions = array($action);
+            $action = array($action);
         }
 
-        if (is_array($action)) {
-            $t_actions = $action;
-        }
+        foreach ($action as $key => $name) {
+            $moduleAction = new ModuleAction($name);
 
-
-
-        if (is_array($t_actions)) {
-            
+            if (!$this->isInActionList($name)) {
+                $this->actionList[] = $moduleAction;
+            }
         }
     }
 
     public function setDefaultAction($action) {
         $this->actionDefault = $action;
 
-        if ($this->isInActionList($action)) {
+        if (!$this->isInActionList($action)) {
             $this->addAction($action);
         }
     }
@@ -62,7 +63,7 @@ class Module {
     public function setActionOnItemSelected($action) {
         $this->actionOnItemSelected = $action;
 
-        if ($this->isInActionList($action)) {
+        if (!$this->isInActionList($action)) {
             $this->addAction($action);
         }
     }
@@ -80,7 +81,13 @@ class Module {
     }
 
     public function isInActionList($action) {
-        return ($action != '' && in_array($action, $this->actionList)) ? true : false;
+        foreach ($this->actionList as $key => $value) {
+            if ($value->name == $action) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
