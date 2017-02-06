@@ -1,5 +1,7 @@
 <?php
 
+include_once 'ModuleAction.class.php';
+
 class Module {
 
     var $filename = '';
