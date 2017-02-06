@@ -112,9 +112,10 @@ class Core {
      */
     static public function getInstanceOfModule() {
         $t_debug = array_pop(debug_backtrace());
-        $fileOfModue = basename($t_debug['file']);
+        $fileOfModule = basename($t_debug['file']);
 
         $module = new Module();
+        $module->filename = $fileOfModule;
 
         return $module;
     }
@@ -138,6 +139,7 @@ class Core {
 
         echo('END');
     }
+
 }
 
 interface OnShutdownListner {

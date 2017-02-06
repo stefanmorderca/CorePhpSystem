@@ -30,6 +30,7 @@ class CoreRequest {
     public function CoreRequest(Module $module, $action = '') {
         $this->isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') ? true : false;
         $this->action = ($module->isInActionList($action)) ? $action : $module->actionDefault;
+        $this->module = $module->filename;
 
         if ($this->action != '' && !$module->isInActionList($action)) {
             $t_log[] = 'No such an action [' . $action . '], switching to default.';

@@ -10,8 +10,8 @@ class Module {
      *
      * @var ModuleAction[] 
      */
-    var $actionsList = array();
-    
+    var $actionList = array();
+
     /**
      *
      * @var boolean
@@ -28,25 +28,29 @@ class Module {
      * @param type $ModuleActionType
      */
     public function addAction($action, $ModuleActionType = '') {
-        // in String - tworzę nową akcję o nazwie takiej jak String
-        // in ModuleAction - dodaje akcję
-        // in String[] - tworzę listę akcji na podstawie tablicy
+        // is String - tworzę nową akcję o nazwie takiej jak String
+        // is ModuleAction - dodaje akcję
+        // is String[] - tworzę listę akcji na podstawie tablicy
     }
 
-    public function setDefaultAction() {
-        
+    public function setDefaultAction($action) {
+        $this->actionDefault = $action;
+
+        if ($this->isInActionList($action)) {
+            $this->addAction($action);
+        }
     }
 
-    public function setActionOnItemSelected() {
-        
+    public function setActionOnItemSelected($action) {
+        $this->actionOnItemSelected = $action;
+
+        if ($this->isInActionList($action)) {
+            $this->addAction($action);
+        }
     }
 
     public function setFilename($name) {
         $this->filename = $name;
-    }
-
-    public function existsInActionList() {
-        
     }
 
     public function setNoAuthRequired() {
@@ -58,7 +62,7 @@ class Module {
     }
 
     public function isInActionList($action) {
-        return ($action != '' && in_array($action, $this->actionsList)) ? true : false;
+        return ($action != '' && in_array($action, $this->actionList)) ? true : false;
     }
 
 }
