@@ -21,13 +21,34 @@ class Db {
         return new $className();
     }
 
-    private function queryReal($sql, $t_connection) {
+    private function connect($t_connection) {
         /* @var $dbLowLevel DbInterface */
         $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
 
         if (!is_resource($t_connection['conn'])) {
             $t_connection['conn'] = $dbLowLevel->connect($t_connection['host'], $t_connection['user'], $t_connection['pass']);
             $dbLowLevel->selectDB($t_connection['base'], $t_connection);
+        }
+    }
+
+    private function getConnection($connname = '_default') {
+        if ($connname == '_default' || $connname == '') {
+            $t_connection = DbConfigure::getCurentConnection();
+        } else {
+            $t_connection = DbConfigure::getCurentConnectionByName($connname);
+        }
+
+        if (!is_resource($t_connection['conn'])) {
+            self::connect($t_connection);
+        }
+    }
+
+    private function queryReal($sql, $t_connection) {
+        /* @var $dbLowLevel DbInterface */
+        $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
+
+        if (!is_resource($t_connection['conn'])) {
+            self::connect($t_connection);
         }
 
         return $dbLowLevel->query($sql, $t_connection);
@@ -346,11 +367,7 @@ class Db {
     }
 
     public function selectDB($dbname, $connname = '_default') {
-        if ($connname == '_default' || $connname == '') {
-            $t_connection = DbConfigure::getCurentConnection();
-        } else {
-            $t_connection = DbConfigure::getCurentConnectionByName($connname);
-        }
+        $t_connection = self::getConnection($connname);
 
         switch ($t_connection['type']) {
             case 'oracle':
@@ -366,11 +383,7 @@ class Db {
     }
 
     public function setConnectionCharset($charset, $connname = '_default') {
-        if ($connname == '_default' || $connname == '') {
-            $t_connection = DbConfigure::getCurentConnection();
-        } else {
-            $t_connection = DbConfigure::getCurentConnectionByName($connname);
-        }
+        $t_connection = self::getConnection($connname);
 
         switch ($t_connection['type']) {
             case 'oracle':
