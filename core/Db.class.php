@@ -86,6 +86,8 @@ class Db {
             $type = 6;
         } elseif (strpos($queryTest, 'CREATE') === 0) {
             $type = 7;
+        } elseif (strpos($queryTest, 'SET') === 0) {
+            $type = 8;
         } else {
             $t_q = explode(" ", $query);
             throw new Exception("DB::query -> operation:" . strtoupper($t_q[0]) . " not permited");
