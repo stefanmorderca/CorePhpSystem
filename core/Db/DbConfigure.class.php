@@ -23,6 +23,14 @@ class DbConfigure {
         return $GLOBALS['_CONFIG']['DB']['connection_list'][$GLOBALS['_CONFIG']['DB']['connection']];
     }
 
+    public function getCurentConnectionByName($connectionAlias) {
+        if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias])) {
+            throw new Exception("There is no registered connection with alias ['$connectionAlias']ž");
+        }
+        
+        return $GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias];
+    }
+
     public function addConnection($DbConnectionType, $host, $user, $pass, $base, $connection_name = '_default') {
         $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name] = array();
         $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['host'] = $host;
@@ -40,4 +48,5 @@ class DbConfigure {
     public function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
         $this->addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
     }
+
 }

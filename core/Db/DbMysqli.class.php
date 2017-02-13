@@ -254,7 +254,7 @@ class DbMysql implements DbInterface {
     }
 
     static function setCharset($charset, $t_connection) {
-        if (mysqli_set_charset( $t_connection['conn'], $charset)) {
+        if (mysqli_set_charset($t_connection['conn'], $charset)) {
             return true;
         } else {
             return false;
@@ -283,7 +283,7 @@ class DbMysql implements DbInterface {
      * @return type
      */
     static function query($query, $t_connection) {
-        $result = mysqli_query( $t_connection['conn'], $query);
+        $result = mysqli_query($t_connection['conn'], $query);
 
         if ($result === null || $result === false) {
             //TODO: Zapisz jakos ten blad itp rzuć wyjątekiem - wogóle to najlepiej zwróć wyjątek

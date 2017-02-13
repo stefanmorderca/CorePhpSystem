@@ -346,29 +346,41 @@ class Db {
     }
 
     public function selectDB($dbname, $connname = '_default') {
-        switch ($GLOBALS['_CFG']['sql'][$connname]['type']) {
+        if ($connname == '_default' || $connname == '') {
+            $t_connection = DbConfigure::getCurentConnection();
+        } else {
+            $t_connection = DbConfigure::getCurentConnectionByName($connname);
+        }
+
+        switch ($t_connection['type']) {
             case 'oracle':
-                return DbOracle::selectDB($dbname, $connname);
+                return DbOracle::selectDB($dbname, $t_connection);
                 break;
             case 'mysql':
-                return DbMysql::selectDB($dbname, $connname);
+                return DbMysql::selectDB($dbname, $t_connection);
                 break;
             default:
-                throw new Exception("DB::init fails! - unknown db type '" . $GLOBALS['_CFG']['sql'][$connname]['type'] . "'", E_USER_ERROR);
+                throw new Exception("DB::init fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
                 break;
         }
     }
 
     public function setConnectionCharset($charset, $connname = '_default') {
-        switch ($GLOBALS['_CFG']['sql'][$connname]['type']) {
+        if ($connname == '_default' || $connname == '') {
+            $t_connection = DbConfigure::getCurentConnection();
+        } else {
+            $t_connection = DbConfigure::getCurentConnectionByName($connname);
+        }
+
+        switch ($t_connection['type']) {
             case 'oracle':
-                return DB_oracle::setCharset($charset, $connname);
+                return DbOracle::setCharset($charset, $t_connection);
                 break;
             case 'mysql':
-                return DB_mysql::setCharset($charset, $connname);
+                return DbMysql::setCharset($charset, $t_connection);
                 break;
             default:
-                trigger_error("DB::init fails! - unknown db type '" . $GLOBALS['_CFG']['sql'][$connname]['type'] . "'", E_USER_ERROR);
+                trigger_error("DB::init fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
                 throw new Exception("DB::connect fails!");
                 break;
         }
