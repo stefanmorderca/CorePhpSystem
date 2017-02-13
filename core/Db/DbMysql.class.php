@@ -233,13 +233,13 @@ include_once 'DbInterface.class.php';
 class DbMysql implements DbInterface {
 
     static function connect($host, $user, $pass) {
-        $resource = mysql_connect($host, $user, $pass);
+        $resource = mysqli_connect($host, $user, $pass);
 
         return $resource;
     }
 
     static function selectDB($dbname, $t_connection) {
-        if (mysql_select_db($dbname, $t_connection['conn'])) {
+        if (mysqli_select_db($dbname, $t_connection['conn'])) {
             return true;
         } else {
             return false;
@@ -247,7 +247,7 @@ class DbMysql implements DbInterface {
     }
 
     static function setCharset($charset, $t_connection) {
-        if (mysql_set_charset($charset, $t_connection['conn'])) {
+        if (mysqli_set_charset($charset, $t_connection['conn'])) {
             return true;
         } else {
             return false;
@@ -257,12 +257,12 @@ class DbMysql implements DbInterface {
     /**
      * Tu są 3 przypadki/sposoby obsłużenia odpowiedzi
      *
-     * 1. Odbieramy dane z bazy mysql_fetch_assoc, mysql_fetch_row, mysql_fetch_array 
-     * 	Wszystko można obsłużyć za pomocą mysql_fetch_assoc
+     * 1. Odbieramy dane z bazy mysqli_fetch_assoc, mysqli_fetch_row, mysqli_fetch_array 
+     * 	Wszystko można obsłużyć za pomocą mysqli_fetch_assoc
      *
-     * 2. Poszedł insert - przydało by się pobrać last_insert_id mysql_insert_id
+     * 2. Poszedł insert - przydało by się pobrać last_insert_id mysqli_insert_id
      *
-     * 3. DELETE, UPDATE - wystarczy policzyć ilość zmienionych wpisów mysql_affected_rows
+     * 3. DELETE, UPDATE - wystarczy policzyć ilość zmienionych wpisów mysqli_affected_rows
      *
      * PS: 	CREATE TABLE/DATABASE zwraca 1 affected rows, lub error z jakąś tam wiadomością
      * 	DESC TABLE, SHOW TABLE/DATABASE/PROCESSLIST to zwykły select
@@ -276,12 +276,12 @@ class DbMysql implements DbInterface {
      * @return type
      */
     static function query($query, $t_connection) {
-        $result = mysql_query($query, $t_connection['conn']);
+        $result = mysqli_query($query, $t_connection['conn']);
 
         if ($result === null || $result === false) {
             //TODO: Zapisz jakos ten blad itp rzuć wyjątekiem - wogóle to najlepiej zwróć wyjątek
             $echo = $query . "\n";
-            $echo .= mysql_error($t_connection['conn']) . "\n";
+            $echo .= mysqli_error($t_connection['conn']) . "\n";
 
             throw new Exception($echo);
         }
@@ -289,17 +289,17 @@ class DbMysql implements DbInterface {
         $t_output = array();
 
         if (!is_bool($result)) {
-            while ($t_tmp = mysql_fetch_assoc($result)) {
+            while ($t_tmp = mysqli_fetch_assoc($result)) {
                 $t_output[] = $t_tmp;
             }
         }
 
-        $last_insert = mysql_insert_id($t_connection['conn']);
+        $last_insert = mysqli_insert_id($t_connection['conn']);
 
         if (!is_bool($result)) {
-            $ile = mysql_num_rows($result); // for SELECT 
+            $ile = mysqli_num_rows($result); // for SELECT 
         } else {
-            $ile = mysql_affected_rows($t_connection['conn']); // for INSERT, UPDATE, REPLACE or DELETE
+            $ile = mysqli_affected_rows($t_connection['conn']); // for INSERT, UPDATE, REPLACE or DELETE
         }
 
         return array($t_output, $ile, $last_insert);
