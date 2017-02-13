@@ -21,7 +21,7 @@ class Db {
         return new $className();
     }
 
-    private function connect($t_connection) {
+    private function connect($t_connection, $connname = "_default") {
         /* @var $dbLowLevel DbInterface */
         $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
 
@@ -29,7 +29,7 @@ class Db {
             $t_connection['conn'] = $dbLowLevel->connect($t_connection['host'], $t_connection['user'], $t_connection['pass']);
             $dbLowLevel->selectDB($t_connection['base'], $t_connection);
 
-            DbConfigure::addConnectionLinkToConnection($t_connection['conn'], $t_connection['name']);
+            DbConfigure::addConnectionLinkToConnection($t_connection['conn'], $connname);
         }
 
         return $t_connection['conn'];
@@ -43,7 +43,7 @@ class Db {
         }
 
         if (!is_resource($t_connection['conn'])) {
-            self::connect($t_connection);
+            self::connect($t_connection, $connname);
         }
 
         return $t_connection;
