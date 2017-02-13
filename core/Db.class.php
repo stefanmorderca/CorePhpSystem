@@ -43,7 +43,7 @@ class Db {
         }
 
         if (!is_resource($t_connection['conn'])) {
-            self::connect($t_connection, $connname);
+            $t_connection['conn'] = self::connect($t_connection, $connname);
         }
 
         return $t_connection;
@@ -54,7 +54,7 @@ class Db {
         $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
 
         if (!is_resource($t_connection['conn'])) {
-            self::connect($t_connection);
+            $t_connection['conn'] = self::connect($t_connection);
         }
 
         return $dbLowLevel->query($sql, $t_connection);
