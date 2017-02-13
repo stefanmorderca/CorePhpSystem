@@ -25,7 +25,7 @@ class Db {
         /* @var $dbLowLevel DbInterface */
         $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
 
-        if (!is_resource($t_connection['conn'])) {
+        if ($t_connection['conn'] == '') {
             $t_connection['conn'] = $dbLowLevel->connect($t_connection['host'], $t_connection['user'], $t_connection['pass']);
             $dbLowLevel->selectDB($t_connection['base'], $t_connection);
 
@@ -42,7 +42,7 @@ class Db {
             $t_connection = DbConfigure::getCurentConnectionByName($connname);
         }
 
-        if (!is_resource($t_connection['conn'])) {
+        if ($t_connection['conn'] == '') {
             $t_connection['conn'] = self::connect($t_connection, $connname);
         }
 
@@ -53,7 +53,7 @@ class Db {
         /* @var $dbLowLevel DbInterface */
         $dbLowLevel = $this->getInstanceOfLowLevel($t_connection['type']);
 
-        if (!is_resource($t_connection['conn'])) {
+        if ($t_connection['conn'] == '') {
             $t_connection['conn'] = self::connect($t_connection);
         }
 
