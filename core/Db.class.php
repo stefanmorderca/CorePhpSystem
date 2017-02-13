@@ -41,6 +41,8 @@ class Db {
         if (!is_resource($t_connection['conn'])) {
             self::connect($t_connection);
         }
+        
+        return $t_connection;
     }
 
     private function queryReal($sql, $t_connection) {
