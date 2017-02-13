@@ -46,7 +46,7 @@ class DbConfigure {
     }
 
     public function addConnectionLinkToConnection($link, $connection_name = '_default'){
-        if(!is_resource($link)){
+        if(!is_resource($link) && !is_object($link)){
             throw new Exception("Supplied argument must be a resource. Best choice would be database connection link.");
         }
         
