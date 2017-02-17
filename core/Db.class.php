@@ -60,7 +60,7 @@ class Db {
         return $dbLowLevel->query($sql, $t_connection);
     }
 
-    public function query($sql) {
+    public function query($sql, $params = array()) {
         $fetch = 'assoc';
         $type_of = 0;
         $ile = 0;
@@ -258,12 +258,12 @@ class Db {
         return $t_output;
     }
 
-    public function queryOneRow($sql) {
-        return array_pop($this->query($sql));
+    public function queryOneRow($sql, $params = array()) {
+        return array_pop($this->query($sql, $params));
     }
 
-    public function querySingleColumn($sql) {
-        return array_pop($this->queryOneRow($sql));
+    public function querySingleColumn($sql, $params = array()) {
+        return array_pop($this->queryOneRow($sql, $params));
     }
 
     public function queryKeyValuePairs($sql) {
