@@ -259,11 +259,11 @@ class Db {
     }
 
     static public function queryOneRow($sql) {
-        return array_pop(self::query($sql));
+        return array_pop($this->query($sql));
     }
 
     static public function querySingleColumn($sql) {
-        return array_pop(self::queryOneRow($sql));
+        return array_pop($this->queryOneRow($sql));
     }
 
     static public function queryKeyValuePairs($sql) {
