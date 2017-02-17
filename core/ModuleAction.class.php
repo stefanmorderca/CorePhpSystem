@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * FIXME: What is a purpus of ModuleAction
+ */
 class ModuleAction {
 
     var $name = "";
