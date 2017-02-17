@@ -258,15 +258,15 @@ class Db {
         return $t_output;
     }
 
-    static public function queryOneRow($sql) {
+    public function queryOneRow($sql) {
         return array_pop($this->query($sql));
     }
 
-    static public function querySingleColumn($sql) {
+    public function querySingleColumn($sql) {
         return array_pop($this->queryOneRow($sql));
     }
 
-    static public function queryKeyValuePairs($sql) {
+    public function queryKeyValuePairs($sql) {
         
     }
 
