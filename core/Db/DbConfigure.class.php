@@ -27,7 +27,7 @@ class DbConfigure {
         if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias])) {
             throw new Exception("There is no registered connection with alias ['$connectionAlias']");
         }
-        
+
         return $GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias];
     }
 
@@ -45,14 +45,14 @@ class DbConfigure {
         }
     }
 
-    public function addConnectionLinkToConnection($link, $connection_name = '_default'){
-        if(!is_resource($link) && !is_object($link)){
+    public function addConnectionLinkToConnection($link, $connection_name = '_default') {
+        if (!is_resource($link) && !is_object($link)) {
             throw new Exception("Supplied argument must be a resource. Best choice would be database connection link.");
         }
-        
+
         $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['conn'] = $link;
     }
-    
+
     public function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
         $this->addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
     }
