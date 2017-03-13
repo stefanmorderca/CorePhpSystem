@@ -56,7 +56,7 @@ class Core {
      */
     var $onShutdownListner = '';
 
-    public function Core() {
+    public function __construct() {
         $this->initDebugMode();
         $this->initShutdownFunction();
 

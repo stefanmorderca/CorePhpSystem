@@ -12,7 +12,7 @@ class Db {
     const CONNECTION_TYPE_SQLITE = 'sqlite';
     const CONNECTION_TYPE_POSTGRESQL = 'postgresql';
 
-    public function Db() {
+    public function __construct() {
         
     }
 

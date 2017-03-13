@@ -17,7 +17,7 @@ class Auth implements iAuth {
     const LOGIN_METHOD_POST = 1;
     const LOGIN_METHOD_HASH = 2;
 
-    public function Auth() {
+    public function __construct() {
         $this->AuthProvider = new AuthLocal();
     }
 
