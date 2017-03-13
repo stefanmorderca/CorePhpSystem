@@ -48,7 +48,7 @@ class DbConfigure {
         $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name] = $t_connecion;
 
         if ($connection_name == '_default') {
-            $this->setConnection('_default');
+            self::setConnection('_default');
         }
     }
 
