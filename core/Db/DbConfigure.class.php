@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Should I call you DbConfigurationManager??
+ */
 class DbConfigure {
 
     const TYPE_MYSQL = 'mysql';
@@ -58,7 +61,7 @@ class DbConfigure {
     }
 
     public static function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
-        $this->addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
+        self::addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
     }
 
 }
