@@ -7,7 +7,7 @@ class DbConfigure {
     const TYPE_PGSQL = 'pgsql';
     const TYPE_ORACLE = 'oracle';
 
-    public function DbConfigure() {
+    public function __construct() {
         if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'])){
             $GLOBALS['_CONFIG']['DB']['connection_list'] = array();
         }
@@ -21,11 +21,11 @@ class DbConfigure {
         }
     }
 
-    public function getCurentConnection() {
+    public static function getCurentConnection() {
         return $GLOBALS['_CONFIG']['DB']['connection_list'][$GLOBALS['_CONFIG']['DB']['connection']];
     }
 
-    public function getCurentConnectionByName($connectionAlias) {
+    public static function getCurentConnectionByName($connectionAlias) {
         if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias])) {
             throw new Exception("There is no registered connection with alias ['$connectionAlias']");
         }
@@ -33,7 +33,7 @@ class DbConfigure {
         return $GLOBALS['_CONFIG']['DB']['connection_list'][$connectionAlias];
     }
 
-    public function addConnection($DbConnectionType, $host, $user, $pass, $base, $connection_name = '_default') {
+    public static function addConnection($DbConnectionType, $host, $user, $pass, $base, $connection_name = '_default') {
         $t_connecion = array();
         $t_connecion['host'] = $host;
         $t_connecion['base'] = $base;
@@ -49,7 +49,7 @@ class DbConfigure {
         }
     }
 
-    public function addConnectionLinkToConnection($link, $connection_name = '_default') {
+    public static function addConnectionLinkToConnection($link, $connection_name = '_default') {
         if (!is_resource($link) && !is_object($link)) {
             throw new Exception("Supplied argument must be a resource. Best choice would be database connection link.");
         }
@@ -57,7 +57,7 @@ class DbConfigure {
         $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['conn'] = $link;
     }
 
-    public function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
+    public static function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
         $this->addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
     }
 
