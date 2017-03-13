@@ -16,7 +16,7 @@ class DbConfigure {
         }
     }
 
-    public function setConnection($connection_name) {
+    public static function setConnection($connection_name) {
         if (in_array($connection_name, array_keys($GLOBALS['_CONFIG']['DB']['connection_list']))) {
             $GLOBALS['_CONFIG']['DB']['connection'] = $connection_name;
         } else {
