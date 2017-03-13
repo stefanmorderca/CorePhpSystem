@@ -58,7 +58,9 @@ class SmartyShutdonwListner implements OnShutdownListner {
      * @return SmartyConfigure
      */
     public function configure() {
-        $this->config = new SmartyConfigure();
+        if ($this->config == '') {
+            $this->config = new SmartyConfigure();
+        }
 
         return $this->config;
     }
