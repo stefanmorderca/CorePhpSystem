@@ -8,7 +8,9 @@ class DbConfigure {
     const TYPE_ORACLE = 'oracle';
 
     public function DbConfigure() {
-        $GLOBALS['_CONFIG']['DB']['connection_list'] = array();
+        if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'])){
+            $GLOBALS['_CONFIG']['DB']['connection_list'] = array();
+        }
     }
 
     public function setConnection($connection_name) {
@@ -32,13 +34,15 @@ class DbConfigure {
     }
 
     public function addConnection($DbConnectionType, $host, $user, $pass, $base, $connection_name = '_default') {
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name] = array();
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['host'] = $host;
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['base'] = $base;
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['user'] = $user;
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['pass'] = $pass;
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['type'] = $DbConnectionType;
-        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name]['conn'] = '';
+        $t_connecion = array();
+        $t_connecion['host'] = $host;
+        $t_connecion['base'] = $base;
+        $t_connecion['user'] = $user;
+        $t_connecion['pass'] = $pass;
+        $t_connecion['type'] = $DbConnectionType;
+        $t_connecion['conn'] = '';
+
+        $GLOBALS['_CONFIG']['DB']['connection_list'][$connection_name] = $t_connecion;
 
         if ($connection_name == '_default') {
             $this->setConnection('_default');

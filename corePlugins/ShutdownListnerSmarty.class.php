@@ -210,8 +210,7 @@ class SmartyConfigure {
         }
 
         if (!file_exists($this->getTemplateDir())) {
-                        die($this->getTemplateDir());
-            mkdir($this->getTemplateDir(), 0777);
+            mkdir($this->getTemplateDir(), 0755);
         }
 
         if (!file_exists($this->getCompileDir())) {

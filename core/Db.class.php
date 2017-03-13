@@ -6,6 +6,12 @@ include_once 'Db/DbMysqli.class.php';
 
 class Db {
 
+    const CONNECTION_TYPE_MYSQL = 'mysql';
+    const CONNECTION_TYPE_MSSQL = 'mssql';
+    const CONNECTION_TYPE_ORACLE = 'oracle';
+    const CONNECTION_TYPE_SQLITE = 'sqlite';
+    const CONNECTION_TYPE_POSTGRESQL = 'postgresql';
+
     public function Db() {
         
     }
@@ -97,7 +103,7 @@ class Db {
         $queryTest = strtoupper($query);
 
         // TODO: tu jest fail - musi być na pierwszej pozycji, czyli warunek należy przyrównać do 0
-        // TODO: pytanie co z typowo Jackowymi zapytaniami?
+        // TODO: pytanie co z typowo Jackowymi zapytaniami? albo jeszcze gorzej Bernardowymi
 
         if (strpos($queryTest, 'SELECT') === 0 || strpos($queryTest, 'SHOW') === 0 || strpos($queryTest, 'DESC') === 0 || strpos($queryTest, 'EXPLAIN') === 0) {
             $type = 1;
@@ -376,15 +382,18 @@ class Db {
         $t_connection = self::getConnection($connname);
 
         switch ($t_connection['type']) {
-            case 'oracle':
+            case Db::CONNECTION_TYPE_ORACLE:
                 return DbOracle::selectDB($dbname, $t_connection);
-                break;
-            case 'mysql':
+            case Db::CONNECTION_TYPE_MYSQL:
                 return DbMysql::selectDB($dbname, $t_connection);
-                break;
+            case Db::CONNECTION_TYPE_POSTGRESQL:
+                return DbPostgresql::selectDB($dbname, $t_connection);
+            case Db::CONNECTION_TYPE_MSSQL:
+                return DbMssql::selectDB($dbname, $t_connection);
+            case Db::CONNECTION_TYPE_SQLITE:
+                return DbSqlite::selectDB($dbname, $t_connection);
             default:
-                throw new Exception("DB::init fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
-                break;
+                throw new Exception("DB::selectDB fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
         }
     }
 
@@ -392,16 +401,19 @@ class Db {
         $t_connection = self::getConnection($connname);
 
         switch ($t_connection['type']) {
-            case 'oracle':
+            case Db::CONNECTION_TYPE_ORACLE:
                 return DbOracle::setCharset($charset, $t_connection);
-                break;
-            case 'mysql':
+            case Db::CONNECTION_TYPE_MYSQL:
                 return DbMysql::setCharset($charset, $t_connection);
-                break;
+            case Db::CONNECTION_TYPE_POSTGRESQL:
+                return DbPostgresql::setCharset($charset, $t_connection);
+            case Db::CONNECTION_TYPE_MSSQL:
+                return DbMssql::setCharset($charset, $t_connection);
+            case Db::CONNECTION_TYPE_SQLITE:
+                return DbSqlite::setCharset($charset, $t_connection);
             default:
-                trigger_error("DB::init fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
-                throw new Exception("DB::connect fails!");
-                break;
+                trigger_error("DB::setConnectionCharset fails! - unknown db type '" . $t_connection['type'] . "'", E_USER_ERROR);
+                throw new Exception("DB::setConnectionCharset fails!");
         }
     }
 

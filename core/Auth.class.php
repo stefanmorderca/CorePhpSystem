@@ -14,17 +14,19 @@ class Auth implements iAuth {
     private $AuthProvider;
     private $method = 'none';
     
-    public static $LOGIN_METHOD_POST = 1;
-    public static $LOGIN_METHOD_HASH = 2;
+    const LOGIN_METHOD_POST = 1;
+    const LOGIN_METHOD_HASH = 2;
 
     public function Auth() {
         $this->AuthProvider = new AuthLocal();
+    }
 
+    public function authenticate() {
         if (!$this->isValid() && isset($_POST['username']) && isset($_POST['password'])) {
             $this->login($_POST['username'], $_POST['password']);
 
             if ($this->isValid()) {
-                $this->method = Auth::$LOGIN_METHOD_POST;
+                $this->method = Auth::LOGIN_METHOD_POST;
             }
         }
 
@@ -153,7 +155,7 @@ class Auth implements iAuth {
 
     public function isLoggedInThroughHash() {
         if ($this->isValid()) {
-            if ($this->method == Auth::$LOGIN_METHOD_HASH) {
+            if ($this->method == Auth::LOGIN_METHOD_HASH) {
                 return true;
             }
         }
@@ -162,7 +164,7 @@ class Auth implements iAuth {
     }
 
     public function setLoggedMethodHash() {
-        $this->method = Auth::$LOGIN_METHOD_HASH;
+        $this->method = Auth::LOGIN_METHOD_HASH;
     }
 
 }
