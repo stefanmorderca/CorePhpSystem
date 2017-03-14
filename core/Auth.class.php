@@ -13,7 +13,7 @@ class Auth implements iAuth {
     private $user_id = -1;
     private $AuthProvider;
     private $method = 'none';
-    
+
     const LOGIN_METHOD_POST = 1;
     const LOGIN_METHOD_HASH = 2;
 
@@ -47,17 +47,6 @@ class Auth implements iAuth {
         return false;
     }
 
-    public function logout() {
-        if ($this->isValid()) {
-            $sql = "DELETE FROM session WHERE username = '" . mysql_escape_string($_SESSION['username']) . "' and session_key = '" . $_SESSION['auth_session'] . "' limit 1";
-            my_query($sql);
-        }
-
-        unset($_SESSION['LOGGED_HASH']);
-        unset($_SESSION['username']);
-        unset($_SESSION['auth_session']);
-    }
-
     public function loginByHash($userId, $hash) {
         if ($userId == '' || $hash == '') {
             $this->error[] = "Nazwa użytkownika lub hash są puste";
@@ -84,6 +73,17 @@ class Auth implements iAuth {
         }
 
         return false;
+    }
+
+    public function logout() {
+        if ($this->isValid()) {
+            $sql = "DELETE FROM session WHERE username = '" . mysql_escape_string($_SESSION['username']) . "' and session_key = '" . $_SESSION['auth_session'] . "' limit 1";
+            my_query($sql);
+        }
+
+        unset($_SESSION['LOGGED_HASH']);
+        unset($_SESSION['username']);
+        unset($_SESSION['auth_session']);
     }
 
     private function createSession($username, $password, $userId) {

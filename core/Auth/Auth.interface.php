@@ -1,24 +1,20 @@
 <?php
 
-interface iAuth
-{
-	public function isValid();
+interface iAuth {
 
-	public function logout();
+    public function isValid();
 
-	public function login($username, $password);
+    public function logout();
 
-	public function getError();
+    public function login($username, $password);
 
-	public function getUsername();
+    public function getError();
 
-	public function getUserId();
+    public function getUsername();
 
-	public function changePassword($pass);
+    public function getUserId();
 
-	public function checkPassword($password);
+    public function changePassword($pass);
+
+    public function checkPassword($password);
 }
-
-
-
-
