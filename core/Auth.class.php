@@ -61,14 +61,17 @@ class Auth implements iAuth {
         return false;
     }
 
-    public function login($username, $password) {
+    public function login($username, $password, $client_ip = '', $client_useragent = '') {
+        $client_ip = ($client_ip == '') ? $_SERVER['REMOTE_ADDR'] : $client_ip;
+        $client_useragent = ($client_useragent == '') ? $_SERVER['HTTP_USER_AGENT'] : $client_ip;
+
         if ($username == '' || $password == '') {
             $this->error[] = "Nazwa użytkownika lub hasło jest puste";
             return false;
         }
 
         if ($this->AuthProvider->login($username, $password)) {
-            $this->createSession($username, $password, $this->AuthProvider->getUserId());
+            $this->createSession($username, $client_ip, $client_useragent);
             return true;
         }
 
@@ -77,43 +80,26 @@ class Auth implements iAuth {
 
     public function logout() {
         if ($this->isValid()) {
-            $sql = "DELETE FROM session WHERE username = '" . mysql_escape_string($_SESSION['username']) . "' and session_key = '" . $_SESSION['auth_session'] . "' limit 1";
-            my_query($sql);
+            AuthSessionManager::destroySession();
         }
 
         unset($_SESSION['LOGGED_HASH']);
-        unset($_SESSION['username']);
-        unset($_SESSION['auth_session']);
     }
 
     private function createSession($username, $password, $userId) {
-        $sql = "INSERT INTO session (username, session_key, user_id) VALUES ('" . mysql_escape_string($username) . "', '" . md5(md5($username) . md5($password) . md5(time())) . "', $userId)";
+        $session_key = AuthSessionManager::createSession($username, $password, $userId);
 
-        if ($sessionId = my_query($sql)) {
-            $sql = "SELECT * FROM session WHERE session_id = $sessionId limit 1";
-            $t_dane = my_query($sql);
-
-            $_SESSION['auth_session'] = $t_dane[0]['session_key'];
-            $_SESSION['username'] = $username;
-        }
+        return $session_key;
     }
 
     private function checkMySession() {
         $fl_ok = false;
 
-        $sql = "SELECT * FROM session WHERE username = '" . $_SESSION['username'] . "' and session_key = '" . $_SESSION['auth_session'] . "'";
-
-        if ($t_dane = my_query($sql)) {
-            if (isset($t_dane[0]['username']) && $t_dane[0]['username'] == $_SESSION['username']) {
-                $this->setUsername($t_dane[0]['username']);
-                $this->setUserId($t_dane[0]['user_id']);
-
-                $fl_ok = true;
-            } else {
-                $this->error[] = "O_o? WTF? checkMySession faild";
-            }
-        } else {
-            $this->error[] = "Nie ma takiej sesji";
+        try {
+            AuthSessionManager::checkSession($_SESSION['auth_session']);
+            $fl_ok = true;
+        } catch (Exception $exc) {
+            $this->error[] = $exc->getMessage();
         }
 
         return $fl_ok;
