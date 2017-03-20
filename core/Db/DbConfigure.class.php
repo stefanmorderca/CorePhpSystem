@@ -3,7 +3,7 @@
 /**
  * Should I call you DbConfigurationManager??
  */
-class DbConfigure {
+class AuthConfigure {
 
     const TYPE_MYSQL = 'mysql';
     const TYPE_MSSQL = 'mssql';
@@ -61,7 +61,7 @@ class DbConfigure {
     }
 
     public static function addConnectionToMysql($host, $user, $pass, $base, $connection_name = '_default') {
-        self::addConnection(DbConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
+        self::addConnection(AuthConfigure::TYPE_MYSQL, $host, $user, $pass, $base, $connection_name);
     }
 
 }
