@@ -9,6 +9,7 @@ class AuthConfigure {
     const TYPE_MSSQL = 'mssql';
     const TYPE_PGSQL = 'pgsql';
     const TYPE_ORACLE = 'oracle';
+    const TYPE_SQLITE = 'sqlite';
 
     public function __construct() {
         if (!isset($GLOBALS['_CONFIG']['DB']['connection_list'])){

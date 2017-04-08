@@ -96,8 +96,8 @@ class AuthSessionManager {
     }
 
     /**
-     * Use some data given to generate some kind of hash that can be created for validation
-     * We should use some sort of time ingredient that is close to login time and can be recreated.
+     * Use client meta data to generate some kind of hash that can be recreated for validation of client origins.
+     * We should alosow use some sort of time ingredient that is close to login time and could be recreated.
      * (day? day and hour? but what about 23:59 or 12:59)
      * 
      * @param string $sessionKey
@@ -124,17 +124,17 @@ class AuthSessionManager {
     }
 
     public static function getInitializationSQL() {
-        $sql = "CREATE TABLE IF NOT EXISTS `session` (
-  `session_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `useragent` varchar(255) NOT NULL,
-  `ip` varchar(15) NOT NULL,
-  `session_key` varchar(40) NOT NULL,
-  `time_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`session_id`),
-  KEY `username` (`username`,`session_key`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8";
+        $sql = "CREATE TABLE IF NOT EXISTS session (
+                    session_id int(11) NOT NULL AUTO_INCREMENT,
+                    user_id int(11) NOT NULL,
+                    username varchar(100) NOT NULL,
+                    useragent varchar(255) NOT NULL,
+                    ip varchar(15) NOT NULL,
+                    session_key varchar(40) NOT NULL,
+                    time_create timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (session_id),
+                    KEY username (username, session_key)
+                ) DEFAULT CHARSET=utf8";
 
         return $sql;
     }

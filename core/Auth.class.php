@@ -18,7 +18,7 @@ class Auth implements iAuth {
     const LOGIN_METHOD_HASH = 2;
 
     public function __construct() {
-        $this->AuthProvider = new AuthLocal();
+        $this->AuthProvider = new AuthProviderLocal();
     }
 
     public function authenticate() {
@@ -151,6 +151,15 @@ class Auth implements iAuth {
 
     public function setLoggedMethodHash() {
         $this->method = Auth::LOGIN_METHOD_HASH;
+    }
+
+    /**
+     * @return AuthConfigure
+     */
+    public function configure() {
+        $config = new AuthConfigure();
+
+        return $config;
     }
 
 }

@@ -2,13 +2,13 @@
 
 require_once(realpath(dirname(__FILE__)) . '/Auth.interface.php');
 
-class AuthLocal implements iAuth {
+class AuthProviderLocal implements iAuth {
 
     private $username = '';
     private $error = array();
     private $user_id = -1;
 
-    public function AuthLocal() {
+    public function AuthProviderLocal() {
         if (!$this->isValid() && isset($_POST['username']) && isset($_POST['password'])) {
             $this->login($_POST['username'], $_POST['password']);
         }
@@ -80,9 +80,14 @@ class AuthLocal implements iAuth {
             if ($t_dane[0]['is_active'] == 1 and $t_dane[0]['password'] === md5($password)) {
                 return true;
             }
-            print_r($t_dane);
-            die(md5($password));
+
+            $msg = print_r($t_dane, 1);
+            $msg .= "\n\n";
+            $msg .= md5($password);
+
+            throw new Exception($msg);
         }
+
         return false;
     }
 
