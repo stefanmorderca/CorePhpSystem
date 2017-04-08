@@ -28,23 +28,6 @@ class AuthProviderLocal implements iAuth {
             return false;
         }
 
-        $sql = "SELECT * FROM user WHERE username = '" . mysql_escape_string($username) . "'";
-        if ($t_dane = my_query($sql)) {
-            if ($t_dane[0]['is_active'] == 1 and $t_dane[0]['password'] === md5($password)) {
-                $this->setUserId($t_dane[0]['user_id']);
-
-                return true;
-            } else {
-                if ($t_dane[0]['is_active'] == 0) {
-                    $this->error[] = "Konto nie jest jeszcze aktywne. Sprawdź pocztę e-mail.";
-                } else {
-                    $this->error[] = "Nieprawidłowe hasło";
-                }
-            }
-        } else {
-            $this->error[] = "Nieprawidłowa nazwa użytkownika";
-        }
-
         return false;
     }
 
@@ -61,8 +44,12 @@ class AuthProviderLocal implements iAuth {
     }
 
     public function changePassword($pass) {
-        $sql = "UPDATE user SET password = '" . md5($pass) . "' WHERE username = '" . mysql_escape_string($this->username) . "' and username != '' limit 1";
-        my_query($sql);
+        
+    }
+
+    public function checkPassword($password) {
+
+        return false;
     }
 
     public function setUsername($username) {
@@ -73,22 +60,8 @@ class AuthProviderLocal implements iAuth {
         $this->user_id = $id;
     }
 
-    public function checkPassword($password) {
-        $sql = "SELECT * FROM user WHERE username = '" . mysql_escape_string($this->username) . "' and username != '' limit 1";
-
-        if ($t_dane = my_query($sql)) {
-            if ($t_dane[0]['is_active'] == 1 and $t_dane[0]['password'] === md5($password)) {
-                return true;
-            }
-
-            $msg = print_r($t_dane, 1);
-            $msg .= "\n\n";
-            $msg .= md5($password);
-
-            throw new Exception($msg);
-        }
-
-        return false;
+    public function addUser($username, $password) {
+        
     }
 
 }

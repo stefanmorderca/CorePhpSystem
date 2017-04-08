@@ -4,6 +4,9 @@ require_once(realpath(dirname(__FILE__)) . '/Auth.interface.php');
 
 /**
  * 
+
+My simple as fuck example of Google OAuth2 implementation
+
 spl_autoload_register(function ($class_name) {
     $class_name = str_replace('_', '/', $class_name);
     $class_name = str_replace('\\', '/', $class_name);
@@ -12,9 +15,9 @@ spl_autoload_register(function ($class_name) {
 });
 
 $client = new Google_Client();
-$client->setClientId('432487073992-8gjr8itchhg4d2dppa2746eootdl0kqf.apps.googleusercontent.com');
-$client->setClientSecret('MISV8LKdtzQpwugOfPDedIp8');
-$client->setRedirectUri('http://www.kozak.waw.pl/auth/');
+$client->setClientId('0000000000000-xaxaxaxaxaxa.apps.googleusercontent.com');
+$client->setClientSecret('xaxaxaxaxaxa000000000000');
+$client->setRedirectUri('http://www.mypage.com/auth/');
 $client->addScope(Google_Service_Plus::USERINFO_EMAIL);
 
 $service = new Google_Service_Oauth2($client);
@@ -79,6 +82,8 @@ class AuthProviderGoogle implements iAuth {
     private $googleClient;
 
     public function __construct() {
+        initializeClient();
+        
         if (!$this->isValid() && isset($_POST['username']) && isset($_POST['password'])) {
             $this->login($_POST['username'], $_POST['password']);
         }
@@ -93,7 +98,7 @@ class AuthProviderGoogle implements iAuth {
     }
 
     public function isValid() {
-        return false;
+
     }
 
     public function logout() {
@@ -154,4 +159,9 @@ class AuthProviderGoogle implements iAuth {
     public function checkPassword($password) {
         throw new Exception;
     }
+
+    public function addUser($username, $password) {
+        throw new Exception("How do you expect me to add account to Google cloud?");
+    }
+
 }
