@@ -12,6 +12,12 @@ class Db {
     const CONNECTION_TYPE_SQLITE = 'sqlite';
     const CONNECTION_TYPE_POSTGRESQL = 'postgresql';
 
+    /**
+     *
+     * @var DbConfigure 
+     */
+    private $config;
+    
     public function __construct() {
         
     }
@@ -35,7 +41,7 @@ class Db {
             $t_connection['conn'] = $dbLowLevel->connect($t_connection['host'], $t_connection['user'], $t_connection['pass']);
             $dbLowLevel->selectDB($t_connection['base'], $t_connection);
 
-            AuthConfigure::addConnectionLinkToConnection($t_connection['conn'], $connname);
+            DbConfigure::addConnectionLinkToConnection($t_connection['conn'], $connname);
         }
 
         return $t_connection['conn'];
@@ -43,9 +49,9 @@ class Db {
 
     private function getConnection($connname = '_default') {
         if ($connname == '_default' || $connname == '') {
-            $t_connection = AuthConfigure::getCurentConnection();
+            $t_connection = DbConfigure::getCurentConnection();
         } else {
-            $t_connection = AuthConfigure::getCurentConnectionByName($connname);
+            $t_connection = DbConfigure::getCurentConnectionByName($connname);
         }
 
         if ($t_connection['conn'] == '') {
@@ -129,7 +135,7 @@ class Db {
         $t_time = array();
         $t_time[] = microtime(true);
 
-        $t_res = $this->queryReal($query, AuthConfigure::getCurentConnection());
+        $t_res = $this->queryReal($query, DbConfigure::getCurentConnection());
 
         $t_time[] = microtime(true);
 
@@ -418,12 +424,14 @@ class Db {
     }
 
     /**
-     * @return AuthConfigure
+     * @return DbConfigure
      */
     public function configure() {
-        $config = new AuthConfigure();
+        if (empty($this->config)) {
+            $this->config = new DbConfigure();
+        }
 
-        return $config;
+        return $this->config;
     }
 
     private function logQuery($sql, $time_table, $numrows, $latid) {

@@ -98,6 +98,16 @@ class Core {
     public function initModule(Module $mod) {
         $coreRequest = new CoreRequest($mod);
 
+        if ($mod->isAuthRequired()) {
+            if ($this->auth == '') {
+                throw new Exception("Auth is uninitialized");   
+            } else {
+                if(!$this->auth->isValid()){
+                    $this->auth->handleUnauthorizedAccess();
+                }
+            }
+        }
+
         return $coreRequest;
     }
 

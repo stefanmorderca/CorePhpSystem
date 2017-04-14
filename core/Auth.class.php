@@ -1,24 +1,88 @@
 <?php
 
 require_once('Auth/Auth.interface.php');
-require_once('Auth/AuthLocal.class.php');
+require_once('Auth/AuthConfigure.class.php');
+require_once('Auth/AuthProviderGoogle.class.php');
+require_once('Auth/AuthProviderLocalPhpFile.class.php');
+require_once('Auth/AuthProviderPhpVariable.class.php');
+require_once('Auth/AuthProviderPhpVariable.class.php');
 
 /**
  * Auth main class
  */
 class Auth implements iAuth {
 
+    /**
+     *
+     * @var string 
+     */
     private $username = '';
+
+    /**
+     *
+     * @var string[]
+     */
     private $error = array();
+
+    /**
+     *
+     * @var int
+     */
     private $user_id = -1;
+
+    /**
+     *
+     * @var iAuth 
+     */
     private $AuthProvider;
+
+    /**
+     *
+     * @var string 
+     */
     private $method = 'none';
+
+    /**
+     *
+     * @var AuthConfigure 
+     */
+    private $config;
 
     const LOGIN_METHOD_POST = 1;
     const LOGIN_METHOD_HASH = 2;
 
+    /**
+     *
+     * @var UnauthorizedAccessListner 
+     */
+    private $onUnauthorizedAccessAttemptListner;
+
     public function __construct() {
-        $this->AuthProvider = new AuthProviderLocal();
+        $this->AuthProvider = new AuthProviderPhpVariable();
+    }
+
+    /**
+     * 
+     */
+    private function getInstanceOfAuthProvider() {
+        $isInitializationOfProviderRequired = false;
+        $authProviderType = $this->configure()->getAuthProviderClass();
+
+        if (empty($this->AuthProvider)) {
+            $isInitializationOfProviderRequired = true;
+        } else {
+            $providerType = get_class($this->AuthProvider);
+
+            if ($providerType !== $authProviderType) {
+                $isInitializationOfProviderRequired = true;
+            }
+        }
+
+        if ($isInitializationOfProviderRequired) {
+            $this->AuthProvider = new $authProviderType();
+        }
+
+        return $this->AuthProvider;
     }
 
     public function authenticate() {
@@ -53,8 +117,8 @@ class Auth implements iAuth {
             return false;
         }
 
-        if ($username = $this->AuthProvider->loginByHash($userId, $hash)) {
-            $this->createSession($username, $password, $this->AuthProvider->getUserId());
+        if ($username = $this->getInstanceOfAuthProvider()->loginByHash($userId, $hash)) {
+            $this->createSession($username, $password, $this->getInstanceOfAuthProvider()->getUserId());
             return true;
         }
 
@@ -70,7 +134,7 @@ class Auth implements iAuth {
             return false;
         }
 
-        if ($this->AuthProvider->login($username, $password)) {
+        if ($this->getInstanceOfAuthProvider()->login($username, $password)) {
             $this->createSession($username, $client_ip, $client_useragent);
             return true;
         }
@@ -86,6 +150,14 @@ class Auth implements iAuth {
         unset($_SESSION['LOGGED_HASH']);
     }
 
+    public function handleUnauthorizedAccess() {
+        if ($this->onUnauthorizedAccessAttemptListner == '') {
+            throw new Exception("Unauthorized access attempt without onUnauthorizedAccessAttemptListner");
+        } else {
+            
+        }
+    }
+
     private function createSession($username, $password, $userId) {
         $session_key = AuthSessionManager::createSession($username, $password, $userId);
 
@@ -93,16 +165,16 @@ class Auth implements iAuth {
     }
 
     private function checkMySession() {
-        $fl_ok = false;
+        $isOk = false;
 
         try {
             AuthSessionManager::checkSession($_SESSION['auth_session']);
-            $fl_ok = true;
+            $isOk = true;
         } catch (Exception $exc) {
             $this->error[] = $exc->getMessage();
         }
 
-        return $fl_ok;
+        return $isOk;
     }
 
     public function getError() {
@@ -110,21 +182,21 @@ class Auth implements iAuth {
             return $this->error;
         }
 
-        return $this->AuthProvider->getError();
+        return $this->getInstanceOfAuthProvider()->getError();
     }
 
     public function getUsername() {
         return $this->username;
     }
 
-    public function setUsername($username) {
+    private function setUsername($username) {
         $this->username = $username;
-        $this->AuthProvider->setUsername($username);
+        $this->getInstanceOfAuthProvider()->setUsername($username);
     }
 
-    public function setUserId($id) {
+    private function setUserId($id) {
         $this->user_id = $id;
-        $this->AuthProvider->setUserId($id);
+        $this->getInstanceOfAuthProvider()->setUserId($id);
     }
 
     public function getUserId() {
@@ -132,11 +204,11 @@ class Auth implements iAuth {
     }
 
     public function changePassword($password) {
-        $this->AuthProvider->changePassword($password);
+        return $this->getInstanceOfAuthProvider()->changePassword($password);
     }
 
     public function checkPassword($password) {
-        return $this->AuthProvider->checkPassword($password);
+        return $this->getInstanceOfAuthProvider()->checkPassword($password);
     }
 
     public function isLoggedInThroughHash() {
@@ -153,13 +225,19 @@ class Auth implements iAuth {
         $this->method = Auth::LOGIN_METHOD_HASH;
     }
 
+    public function addUser($username, $password) {
+        $this->getInstanceOfAuthProvider()->addUser($username, $password);
+    }
+
     /**
      * @return AuthConfigure
      */
     public function configure() {
-        $config = new AuthConfigure();
+        if (empty($this->config)) {
+            $this->config = new AuthConfigure();
+        }
 
-        return $config;
+        return $this->config;
     }
 
 }

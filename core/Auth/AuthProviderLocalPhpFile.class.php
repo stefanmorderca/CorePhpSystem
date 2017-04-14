@@ -2,7 +2,7 @@
 
 require_once(realpath(dirname(__FILE__)) . '/Auth.interface.php');
 
-class AuthProviderLocal implements iAuth {
+class AuthProviderLocalPhpFile implements iAuth {
 
     private $username = '';
     private $error = array();

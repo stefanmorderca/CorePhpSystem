@@ -18,7 +18,7 @@ class Module {
      *
      * @var boolean
      */
-    var $isAuthRequired;
+    protected $isAuthRequired;
 
     public function Module() {
         
@@ -87,6 +87,10 @@ class Module {
 
     public function setAuthRequired() {
         $this->isAuthRequired = true;
+    }
+
+    public function isAuthRequired() {
+        return $this->isAuthRequired;
     }
 
     public function isInActionList($action) {

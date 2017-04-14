@@ -2,7 +2,7 @@
 
 require_once(realpath(dirname(__FILE__)) . '/Auth.interface.php');
 
-class AuthProviderLocal implements iAuth {
+class AuthProviderSql implements iAuth {
 
     private $username = '';
     private $error = array();
@@ -89,6 +89,10 @@ class AuthProviderLocal implements iAuth {
         }
 
         return false;
+    }
+
+    public function addUser($username, $password) {
+        
     }
 
 }
