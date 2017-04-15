@@ -112,11 +112,14 @@ class Auth implements iAuth {
         return false;
     }
 
-    public function loginByHash($userId, $hash) {
+    public function loginByHash($userId, $hash, $client_ip = '', $client_useragent = '') {
         if ($userId == '' || $hash == '') {
             $this->error[] = "Nazwa użytkownika lub hash są puste";
             return false;
         }
+
+        $client_ip = ($client_ip == '') ? $_SERVER['REMOTE_ADDR'] : $client_ip;
+        $client_useragent = ($client_useragent == '') ? $_SERVER['HTTP_USER_AGENT'] : $client_ip;
 
         if ($username = $this->getInstanceOfAuthProvider()->loginByHash($userId, $hash)) {
             $this->createSession($username, $password, $this->getInstanceOfAuthProvider()->getUserId());
