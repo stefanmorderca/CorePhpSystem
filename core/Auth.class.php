@@ -6,6 +6,7 @@ require_once('Auth/AuthProviderGoogle.class.php');
 require_once('Auth/AuthProviderLocalPhpFile.class.php');
 require_once('Auth/AuthProviderPhpVariable.class.php');
 require_once('Auth/AuthProviderPhpVariable.class.php');
+require_once('Auth/AuthListner.interface.php');
 
 /**
  * Auth main class
@@ -53,9 +54,9 @@ class Auth implements iAuth {
 
     /**
      *
-     * @var UnauthorizedAccessListner 
+     * @var AuthListner 
      */
-    private $onUnauthorizedAccessAttemptListner;
+    private $authListner;
 
     public function __construct() {
         $this->AuthProvider = new AuthProviderPhpVariable();
@@ -151,11 +152,35 @@ class Auth implements iAuth {
     }
 
     public function handleUnauthorizedAccess() {
-        if ($this->onUnauthorizedAccessAttemptListner == '') {
-            throw new Exception("Unauthorized access attempt without onUnauthorizedAccessAttemptListner");
-        } else {
-            
+        if ($this->authListner == '') {
+            throw new Exception("Unauthorized access attempt without AuthListner");
         }
+
+        $this->authListner->onUnauthorizedAccess();
+    }
+
+    public function handleSuccessfulLogin() {
+        if ($this->authListner == '') {
+            return;
+        }
+
+        $this->authListner->onSuccessfulLogin();
+    }
+
+    public function handleFailedLogin() {
+        if ($this->authListner == '') {
+            throw new Exception("Login failed");
+        }
+
+        $this->authListner->onFailedLogin();
+    }
+
+    public function handleLogout() {
+        if ($this->authListner == '') {
+            return;
+        }
+
+        $this->authListner->onLogout();
     }
 
     private function createSession($username, $password, $userId) {
@@ -238,6 +263,10 @@ class Auth implements iAuth {
         }
 
         return $this->config;
+    }
+
+    public function setUnauthorizedAccessAttemptListner(AuthListner $listner) {
+        $this->authListner = $listner;
     }
 
 }
