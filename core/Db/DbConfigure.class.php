@@ -12,8 +12,10 @@ class DbConfigure {
     const TYPE_SQLITE = 'sqlite';
 
     public function __construct() {
-        if (!isset(self::getRealConfigVar()['connection_list'])) {
-            self::getRealConfigVar()['connection_list'] = array();
+        $config = self::getRealConfigVar();
+        
+        if (!isset($config['connection_list'])) {
+            $config['connection_list'] = array();
         }
     }
 
@@ -32,7 +34,7 @@ class DbConfigure {
     public static function getCurentConnection() {
         return self::getRealConfigVar()['connection_list'][self::getRealConfigVar()['connection']];
     }
-    
+
     public static function getCurentConnectionAlias() {
         return self::getRealConfigVar()['connection'];
     }
