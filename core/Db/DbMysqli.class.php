@@ -304,12 +304,12 @@ class DbMysql implements DbInterface {
         $last_insert = mysqli_insert_id($t_connection['conn']);
 
         if (!is_bool($result)) {
-            $ile = mysqli_num_rows($result); // for SELECT 
+            $count = mysqli_num_rows($result); // for SELECT 
         } else {
-            $ile = mysqli_affected_rows($t_connection['conn']); // for INSERT, UPDATE, REPLACE or DELETE
+            $count = mysqli_affected_rows($t_connection['conn']); // for INSERT, UPDATE, REPLACE or DELETE
         }
 
-        return array($t_output, $ile, $last_insert);
+        return array($t_output, $count, $last_insert);
     }
 
 }

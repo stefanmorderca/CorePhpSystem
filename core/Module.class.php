@@ -18,7 +18,7 @@ class Module {
      *
      * @var boolean
      */
-    protected $isAuthRequired;
+    protected $isAuthRequired = false;
 
     public function Module() {
         

@@ -17,7 +17,7 @@ class Db {
      * @var DbConfigure 
      */
     private $config;
-    
+
     public function __construct() {
         
     }
@@ -140,9 +140,10 @@ class Db {
         $t_time[] = microtime(true);
 
         $t_output_tmp = $t_res[0];
-        $ile = $t_res[1];
+        $numrows = $t_res[1];
         $last_id = $t_res[2];
 
+        $ile = 0;
         switch ($type) {
             case 1:
                 $t_time[] = microtime(true);
@@ -159,6 +160,7 @@ class Db {
                             foreach ($t_output_tmp as $t_tmp) {
                                 $t_row = array();
                                 foreach ($t_tmp as $a) {
+                                    $ile++;
                                     $t_row[] = $a;
                                 }
 
@@ -170,6 +172,8 @@ class Db {
                                 $t_row = array();
                                 $i = 0;
                                 foreach ($t_tmp as $key => $a) {
+                                    $ile++;
+                                            
                                     $t_row[$i] = $a;
                                     $t_row[$key] = $a;
                                     $i++;
@@ -243,7 +247,7 @@ class Db {
                 $t_output = $last_id;
                 break;
             case 3:
-                $t_output = $ile;
+                $t_output = $numrows;
                 break;
             case 4:
 
@@ -265,7 +269,7 @@ class Db {
 
         $t_time[] = microtime(true);
 
-        $this->logQuery($sql, $t_time, $numrows, $last_id);
+        $this->logQuery($sql, $t_time, $numrows, $last_id, DbConfigure::getCurentConnectionAlias());
 
         return $t_output;
     }
@@ -434,21 +438,37 @@ class Db {
         return $this->config;
     }
 
-    private function logQuery($sql, $time_table, $numrows, $latid) {
+    private function logQuery($query, $time_table, $numrows, $latid, $connname) {
         // $time_start = $time_table[0];
         // $time_stop = array_pop($time_table);
         // $time_total = round($time_stop - $time_start, 4);
 
         $time_start = $time_table[0];
         $time_stop = $time_table[1];
+        $time_end = array_pop($time_table);
 
         $time_tin_db = round($time_stop - $time_start, 4);
+        $time_total = round($time_end - $time_start, 4);
 
-        @$GLOBALS['_DB'][$connname]['counter']['queries'] ++;
-        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['query'] = substr($query, 0, 255);
-        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['numrows'] = $ile;
-        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time'] = $time_total;
-        @$GLOBALS['_DB'][$connname]['log']['queries'][$GLOBALS['_DB'][$connname]['counter']['queries']]['time_in_db'] = $time_tin_db;
+        if (!isset($GLOBALS['_DB'])) {
+            $GLOBALS['_DB'] = array();
+        }
+
+        if (!isset($GLOBALS['_DB'][$connname])) {
+            $GLOBALS['_DB'][$connname] = array();
+            $GLOBALS['_DB'][$connname]['counter'] = array();
+            $GLOBALS['_DB'][$connname]['counter']['queries'] = 0;
+        }
+
+        $queries = $GLOBALS['_DB'][$connname]['counter']['queries'];
+
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries] = array();
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['query'] = substr($query, 0, 255);
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['numrows'] = $numrows;
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['time'] = $time_total;
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['time_in_db'] = $time_tin_db;
+
+        $GLOBALS['_DB'][$connname]['counter']['queries'] ++;
     }
 
 }

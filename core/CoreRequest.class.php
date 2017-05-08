@@ -19,7 +19,7 @@ class CoreRequest {
 
     /**
      *
-     * @var enum  GET|POST|AJAX
+     * @var enum  GET|POST
      */
     var $httpMethod = "GET";
     var $module;
@@ -36,10 +36,21 @@ class CoreRequest {
             $t_log[] = 'No such an action [' . $action . '], switching to default.';
         }
 
+        if ($this->isAjax) {
+            $this->action->ajax = $this->action->name;
+            $this->action->name = $this->action->default;
+        }
+
         if (isset($_GET['id']) && $_GET['id'] > 0 && empty($_POST)) {
             $this->itemId = $_GET['id'];
 
             $this->action = ($this->action == $module->actionDefault || $this->action == '') ? $module->actionOnItemSelected : $this->action;
+        }
+
+        if (!empty($_POST)) {
+            $this->httpMethod = 'POST';
+            @$this->action->post = ($this->isAjax) ? $this->action->ajax : $this->action->name;
+            @$this->action->name = 'ValidateForm';
         }
     }
 

@@ -32,6 +32,10 @@ class DbConfigure {
     public static function getCurentConnection() {
         return self::getRealConfigVar()['connection_list'][self::getRealConfigVar()['connection']];
     }
+    
+    public static function getCurentConnectionAlias() {
+        return self::getRealConfigVar()['connection'];
+    }
 
     public static function getCurentConnectionByName($connectionAlias) {
         if (!isset(self::getRealConfigVar()['connection_list'][$connectionAlias])) {

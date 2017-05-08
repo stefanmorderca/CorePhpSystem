@@ -8,7 +8,7 @@ class AuthProviderPhpVariable implements iAuth {
     private $error = array();
     private $user_id = -1;
 
-    public function AuthProviderLocal() {
+    public function __construct() {
         if (!$this->isValid() && isset($_POST['username']) && isset($_POST['password'])) {
             $this->login($_POST['username'], $_POST['password']);
         }
@@ -24,8 +24,17 @@ class AuthProviderPhpVariable implements iAuth {
 
     public function login($username, $password) {
         if ($username == '' || $password == '') {
-            $this->error[] = "Nazwa użytkownika lub hasło jest puste";
+            $this->error[] = "Username or password is empty.";
             return false;
+        }
+
+        if ($user = $this->findUserByName($username)) {
+            if ($user['password'] !== $password) {
+                $this->error[] = "Username or password is empty.";
+                return false;
+            } else {
+                return true;
+            }
         }
 
         return false;
@@ -61,7 +70,35 @@ class AuthProviderPhpVariable implements iAuth {
     }
 
     public function addUser($username, $password) {
-        
+        global $t_auth_user_table;
+
+        if ($this->findUserByName($username)) {
+            $this->error[] = "User already exists";
+        }
+
+        $newUser = array();
+        $newUser['username'] = $username;
+        $newUser['password'] = $password;
+
+        $t_auth_user_table[] = $newUser;
+    }
+
+    public function findUserByName($username) {
+        global $t_auth_user_table;
+
+        if (!is_array($t_auth_user_table)) {
+            $this->error[] = "findUserByName: No users defined";
+
+            return false;
+        }
+
+        foreach ($t_auth_user_table as $row) {
+            if ($row['username'] == $username) {
+                return $row;
+            }
+        }
+
+        return false;
     }
 
 }

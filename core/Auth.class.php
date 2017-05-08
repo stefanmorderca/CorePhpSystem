@@ -2,11 +2,12 @@
 
 require_once('Auth/Auth.interface.php');
 require_once('Auth/AuthConfigure.class.php');
+require_once('Auth/AuthListner.interface.php');
 require_once('Auth/AuthProviderGoogle.class.php');
 require_once('Auth/AuthProviderLocalPhpFile.class.php');
 require_once('Auth/AuthProviderPhpVariable.class.php');
 require_once('Auth/AuthProviderPhpVariable.class.php');
-require_once('Auth/AuthListner.interface.php');
+require_once('Auth/AuthSessionManager.class.php');
 
 /**
  * Auth main class
@@ -140,6 +141,9 @@ class Auth implements iAuth {
 
         if ($this->getInstanceOfAuthProvider()->login($username, $password)) {
             $this->createSession($username, $client_ip, $client_useragent);
+           
+            $this->handleSuccessfulLogin();
+            
             return true;
         }
 
@@ -196,7 +200,7 @@ class Auth implements iAuth {
         $isOk = false;
 
         try {
-            AuthSessionManager::checkSession($_SESSION['auth_session']);
+            AuthSessionManager::checkSession($_SESSION['auth_session'], $_SESSION['username'], $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
             $isOk = true;
         } catch (Exception $exc) {
             $this->error[] = $exc->getMessage();
@@ -211,6 +215,18 @@ class Auth implements iAuth {
         }
 
         return $this->getInstanceOfAuthProvider()->getError();
+    }
+
+    public function getErrorString() {
+        $error = '';
+
+        $t_error = self::getError();
+
+        if (is_array($t_error) && count($t_error) != array()) {
+            $error = print_r($t_error, 1);
+        }
+
+        return $error;
     }
 
     public function getUsername() {

@@ -21,7 +21,13 @@ class AuthSessionManager {
 
         $sessionKey = self::createSessionKey($username, $ip, $userAgent);
 
-        $sql = "INSERT INTO " . self::SESSION_TABLE_NAME . " (username, session_key, ip, user_agent) VALUES ('" . mysql_escape_string($username) . "', '$sessionKey', $userId)";
+        $t_session = array();
+        $t_session['username'] = mysql_escape_string($username);
+        $t_session['session_key'] = $sessionKey;
+        $t_session['ip'] = $ip;
+        $t_session['useragent'] = $userAgent;
+
+        $sql = "INSERT INTO " . self::SESSION_TABLE_NAME . " (" . implode(", ", array_keys($t_session)) . ") VALUES ('" . implode("', '", $t_session) . "');";
 
         if ($sessionId = my_query($sql)) {
             $sql = "SELECT * FROM " . self::SESSION_TABLE_NAME . " WHERE session_id = $sessionId limit 1";
@@ -37,22 +43,11 @@ class AuthSessionManager {
             throw new Exception("[$ip] is not a valid IP address");
         }
 
-        if (self::isSessionKeyValid($sessionKey)) {
-            throw new Exception("What the heck is that [$sessionKey]?");
-        }
-
-        $sql = "SELECT * FROM " . self::SESSION_TABLE_NAME . " WHERE session_key = '" . $sessionKey . "'";
-        $t_session_row = my_query($sql);
+        $t_session_row = self::getCurrentSession();
 
         if ($t_session_row !== false) {
-            if (count($t_session_row) !== 1) {
-                throw new Exception("Duplicated sessions");
-            }
-
-            $t_session_row = $t_session_row[0];
-
             $givenKey = self::createRecurrentKey($username, $ip, $userAgent);
-            $savedKey = self::createRecurrentKey($t_session_row['username'], $t_session_row['ip'], $t_session_row['user_agent']);
+            $savedKey = self::createRecurrentKey($t_session_row['username'], $t_session_row['ip'], $t_session_row['useragent']);
 
             if ($givenKey !== $savedKey) {
                 throw new Exception("Sessions exists with diffrent details");
@@ -67,22 +62,47 @@ class AuthSessionManager {
     public static function destroySession() {
         $sessionKey = $_SESSION[self::PHP_SESSION_IDENTIFIER_KEY];
 
-        if (self::isSessionKeyValid($sessionKey)) {
-            throw new Exception("What the heck is that [$sessionKey]?");
-        }
+        $t_session = self::getCurrentSession();
 
         unset($_SESSION[self::PHP_SESSION_IDENTIFIER_KEY]);
         unset($_SESSION[self::PHP_SESSION_USERNAME_KEY]);
 
-        $sql = "SELECT * FROM " . self::SESSION_TABLE_NAME . " WHERE username = '" . mysql_escape_string($_SESSION[self::PHP_SESSION_USERNAME_KEY]) . "' AND session_key = '" . $_SESSION[self::PHP_SESSION_IDENTIFIER_KEY] . "' LIMIT 1";
+        $sql = "UPDATE " . self::SESSION_TABLE_NAME . " SET session_key = '" . $sessionKey . "_DONE' WHERE session_id = " . $t_session['session_id'];
+        my_query($sql);
+    }
+
+    public static function extendSession() {
+        $t_session = self::getCurrentSession();
+
+        $sql = "UPDATE " . self::SESSION_TABLE_NAME . " SET time_last_activity = NOW() WHERE session_id = " . $t_session['session_id'] . " AND session_key = '" . $t_session['session_key'] . "';";
+        my_query($sql);
+    }
+
+    /**
+     * 
+     * @return array(session_id, user_id, username, useragent, ip, session_key, time_create, time_last_activity)
+     * @throws Exception
+     */
+    public static function getCurrentSession() {
+        $sessionKey = $_SESSION[self::PHP_SESSION_IDENTIFIER_KEY];
+        $username = $_SESSION[self::PHP_SESSION_USERNAME_KEY];
+
+        if (!self::isSessionKeyValid($sessionKey)) {
+            throw new Exception("What the heck is that [$sessionKey]?");
+        }
+
+        $sql = "SELECT * FROM " . self::SESSION_TABLE_NAME . " WHERE username = '" . mysql_escape_string($username) . "' AND session_key = '" . $sessionKey . "' LIMIT 1";
         $t_session = my_query($sql);
 
-        if (isset($t_session[0]['session_id']) && $t_session[0]['session_id'] > 0) {
-            $sql = "UPDATE " . self::SESSION_TABLE_NAME . " SET session_key = '" . $_SESSION[self::PHP_SESSION_IDENTIFIER_KEY] . "_DONE' WHERE session_id = " . $t_session[0]['session_id'];
-            my_query($sql);
-        } else {
+        if (!(isset($t_session[0]['session_id']) && $t_session[0]['session_id'] > 0)) {
             throw new Exception("Session not found");
         }
+
+        if (count($t_session) != 1) {
+            throw new Exception("Multiple Sessions found for key[" . $sessionKey . "] - WTF?");
+        }
+
+        return $t_session[0];
     }
 
     /**
@@ -116,7 +136,9 @@ class AuthSessionManager {
     private static function isSessionKeyValid($sessionKey) {
         $returnMe = true;
 
-        if (false === preg_match('/^[a-f0-9]{32}$/', $sessionKey)) {
+        $result = preg_match('/^[a-f0-9]{32}$/', $sessionKey);
+
+        if (0 === $result || false === $result) {
             $returnMe = false;
         }
 
@@ -124,17 +146,15 @@ class AuthSessionManager {
     }
 
     public static function getInitializationSQL() {
-        $sql = "CREATE TABLE IF NOT EXISTS session (
-                    session_id int(11) NOT NULL AUTO_INCREMENT,
-                    user_id int(11) NOT NULL,
-                    username varchar(100) NOT NULL,
-                    useragent varchar(255) NOT NULL,
-                    ip varchar(15) NOT NULL,
-                    session_key varchar(40) NOT NULL,
-                    time_create timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    PRIMARY KEY (session_id),
-                    KEY username (username, session_key)
-                ) DEFAULT CHARSET=utf8";
+        $sql = "CREATE TABLE session (
+  session_id int(11) NOT NULL,
+  user_id int(11) DEFAULT NULL,
+  username varchar(100) NOT NULL,
+  useragent varchar(255) NOT NULL,
+  ip varchar(15) NOT NULL,
+  session_key varchar(40) NOT NULL,
+  time_create timestamp NOT NULL DEFAULT NOW(),
+  time_last_activity timestamp NULL DEFAULT NULL);";
 
         return $sql;
     }

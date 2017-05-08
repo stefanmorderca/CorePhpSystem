@@ -5,7 +5,7 @@ require_once(realpath(dirname(__FILE__)) . '/Auth.interface.php');
 /**
  * 
 
-My simple as fuck example of Google OAuth2 implementation
+My "simple as fuck" example of Google OAuth2 implementation
 
 spl_autoload_register(function ($class_name) {
     $class_name = str_replace('_', '/', $class_name);
