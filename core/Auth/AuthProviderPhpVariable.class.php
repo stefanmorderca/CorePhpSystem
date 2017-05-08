@@ -78,7 +78,7 @@ class AuthProviderPhpVariable implements iAuth {
             throw new Exception("User already exists");
         }
 
-        if ($this->error[count($this->error)] == "findUserByName: No users defined") {
+        if ($this->error[count($this->error) - 1] == "findUserByName: No users defined") {
             array_pop($this->error);
         }
 
