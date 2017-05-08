@@ -121,7 +121,8 @@ class Core {
      * @return \Module
      */
     static public function getInstanceOfModule() {
-        $t_debug = array_pop(debug_backtrace());
+        $debug_backtrace = debug_backtrace();
+        $t_debug = array_pop($debug_backtrace);
         $fileOfModule = basename($t_debug['file']);
 
         $module = new Module();
