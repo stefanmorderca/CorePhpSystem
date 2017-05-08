@@ -12,26 +12,16 @@ class AuthConfigure {
     const TYPE_FACEBOOK = '';
     const TYPE_GOOGLE_AUTH = 'AuthProviderGoogle';
 
-    public function __construct() {
-        if (!isset($GLOBALS['_CONFIG']['AUTH'])) {
-            $GLOBALS['_CONFIG']['AUTH'] = array();
-        }
-    }
-
-    private static function &getRealConfigVar() {
-        return $GLOBALS['_CONFIG']['AUTH'];
-    }
-
     public static function setType($newType) {
-        self::getRealConfigVar()['type'] = $newType;
+        $GLOBALS['_CONFIG']['AUTH']['type'] = $newType;
     }
 
     public static function getType() {
-        return self::getRealConfigVar()['type'];
+        return $GLOBALS['_CONFIG']['AUTH']['type'];
     }
 
     public static function getAuthProviderClass() {
-        return self::getRealConfigVar()['type'];
+        return $GLOBALS['_CONFIG']['AUTH']['type'];
     }
 
     public static function setTypeConfig() {
