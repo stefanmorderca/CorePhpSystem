@@ -79,8 +79,8 @@ class SmartyConfigure {
     var $configDir = 'configs';
     var $debugging = false;
     var $globalVaraviableNameToAssign = 'smartyAssign';
-
-    public function setAssignSourceValeName($variable_name) {
+                    
+    public function setAssignSourceValueName($variable_name) {
         $this->globalVaraviableNameToAssign = $variable_name;
 
         return $this;
