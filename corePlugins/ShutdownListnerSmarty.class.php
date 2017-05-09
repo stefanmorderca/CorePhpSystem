@@ -52,7 +52,7 @@ class SmartyShutdonwListner implements OnShutdownListner {
             }
         }
 
-        if (isset($smarty_display)) {
+        if (isset($smarty_display) && $smarty_display != '') {
             $this->smarty->assign("inFrame", true);
 
             if ($isJson === true) {
