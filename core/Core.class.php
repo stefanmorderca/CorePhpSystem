@@ -56,6 +56,12 @@ class Core {
      */
     var $onShutdownListner = '';
 
+    /**
+     *
+     * @var boolean 
+     */
+    var $isShutdownInitialized = false;
+
     public function __construct() {
         $this->initDebugMode();
         $this->initShutdownFunction();
@@ -97,12 +103,12 @@ class Core {
      */
     public function initModule(Module $mod) {
         $coreRequest = new CoreRequest($mod);
-        
+
         if ($mod->isAuthRequired()) {
             if ($this->auth == '') {
-                throw new Exception("Auth is uninitialized");   
+                throw new Exception("Auth is uninitialized");
             } else {
-                if(!$this->auth->isValid()){
+                if (!$this->auth->isValid()) {
                     $this->auth->handleUnauthorizedAccess();
                 }
             }
@@ -136,6 +142,12 @@ class Core {
         @$resp = $GLOBALS['request'];
         /* @var $core Core */
         @$core = $GLOBALS['core'];
+
+        if ($core->isShutdownInitialized) {
+            die();
+        }
+
+        $core->isShutdownInitialized = true;
 
         if ($core->onShutdownListner !== '') {
             $core->onShutdownListner->OnShutdown($die);
