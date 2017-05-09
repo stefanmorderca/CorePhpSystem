@@ -16,7 +16,7 @@ class SmartyShutdonwListner implements OnShutdownListner {
         
     }
 
-    function OnShutdown() {
+    function OnShutdown($smarty_display) {
         require_once($this->config->getSmartyLibPath());
 
         $this->smarty = new Smarty();

@@ -138,7 +138,7 @@ class Core {
         @$core = $GLOBALS['core'];
 
         if ($core->onShutdownListner !== '') {
-            $core->onShutdownListner->OnShutdown();
+            $core->onShutdownListner->OnShutdown($die);
             die();
         }
 
