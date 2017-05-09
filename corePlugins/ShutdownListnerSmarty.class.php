@@ -16,7 +16,20 @@ class SmartyShutdonwListner implements OnShutdownListner {
         
     }
 
-    function OnShutdown($smarty_display) {
+    /**
+     * @return SmartyConfigure
+     */
+    public function configure() {
+        if ($this->config == '') {
+            $this->config = new SmartyConfigure();
+        }
+
+        return $this->config;
+    }
+
+    public function OnShutdown($die = '') {
+        $smarty_display = $die;
+
         require_once($this->config->getSmartyLibPath());
 
         $this->smarty = new Smarty();
@@ -54,17 +67,6 @@ class SmartyShutdonwListner implements OnShutdownListner {
         }
     }
 
-    /**
-     * @return SmartyConfigure
-     */
-    public function configure() {
-        if ($this->config == '') {
-            $this->config = new SmartyConfigure();
-        }
-
-        return $this->config;
-    }
-
 }
 
 class SmartyConfigure {
@@ -79,7 +81,7 @@ class SmartyConfigure {
     var $configDir = 'configs';
     var $debugging = false;
     var $globalVaraviableNameToAssign = 'smartyAssign';
-                    
+
     public function setAssignSourceValueName($variable_name) {
         $this->globalVaraviableNameToAssign = $variable_name;
 
