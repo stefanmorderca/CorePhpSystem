@@ -10,7 +10,7 @@ class Logger {
 
     static $DEFAULT_LOG_EVENT_LEVEL = 4;
     static $DEFAULT_LOGFILE_PATH = '/private/log/';
-    static $DEFAULT_LOGFILE_PREFIX = 'default';
+    static $DEFAULT_LOGFILE_PREFIX = 'default_';
     static $DEFAULT_LOGFILE_EXTENSION = '.log';
     static $EVENT_LEVEL_ALL = 99999;
     static $EVENT_LEVEL_TRACE = 6;
@@ -32,7 +32,7 @@ class Logger {
 
         $file = self::getExecutionFileName();
         $level = self::decodeLogLevel($LogLevel);
-        $myLogFile = self::getFilename($code);
+        $myLogFile = self::getFilename();
 
         if (gettype($msg) != 'string') {
             $msg = "(" . gettype($msg) . ") " . print_r($msg, 1);
@@ -123,7 +123,7 @@ class Logger {
      */
     static private function getFilename() {
 // TODO: na podstawie konfiguracji sprawdzić, czy dany: loglevel, $tag, $file, $class nie ma filtrować logu
-        $filename = Logger::$DEFAULT_LOGFILE_PATH . Logger::$DEFAULT_LOGFILE_PREFIX . date('Y-m-d') . Logger::$DEFAULT_LOGFILE_EXTENSION;
+        $filename = ROOT_PATH . Logger::$DEFAULT_LOGFILE_PATH . Logger::$DEFAULT_LOGFILE_PREFIX . date('Y-m-d') . Logger::$DEFAULT_LOGFILE_EXTENSION;
 
         return $filename;
     }

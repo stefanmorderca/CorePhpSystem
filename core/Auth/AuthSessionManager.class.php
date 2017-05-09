@@ -158,7 +158,7 @@ class AuthSessionManager {
   PRIMARY KEY (`session_id`),
   KEY `username` (`username`),
   KEY `session_key` (`session_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ";
 
         return $sql;

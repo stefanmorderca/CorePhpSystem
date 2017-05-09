@@ -18,5 +18,3 @@ $smartyShutdown->configure()->setSmartyLibPath('/smarty/smarty/libs/Smarty.class
 
 $core->setShutdownListner($smartyShutdown);
 
-$core->auth->configure()->setTypeSql();
-        
