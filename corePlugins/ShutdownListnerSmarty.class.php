@@ -29,7 +29,7 @@ class SmartyShutdonwListner implements OnShutdownListner {
 
     public function OnShutdown($die = '') {
         $smarty_display = $die;
-        $isJson = fales;
+        $isJson = false;
 
         require_once($this->config->getSmartyLibPath());
 
