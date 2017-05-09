@@ -155,5 +155,5 @@ class Core {
 
 interface OnShutdownListner {
 
-    function OnShutdown();
+    function OnShutdown($die = '');
 }
