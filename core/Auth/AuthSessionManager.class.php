@@ -146,15 +146,20 @@ class AuthSessionManager {
     }
 
     public static function getInitializationSQL() {
-        $sql = "CREATE TABLE session (
-  session_id int(11) NOT NULL,
-  user_id int(11) DEFAULT NULL,
-  username varchar(100) NOT NULL,
-  useragent varchar(255) NOT NULL,
-  ip varchar(15) NOT NULL,
-  session_key varchar(40) NOT NULL,
-  time_create timestamp NOT NULL DEFAULT NOW(),
-  time_last_activity timestamp NULL DEFAULT NULL);";
+        $sql = "CREATE TABLE IF NOT EXISTS `session` (
+  `session_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `username` varchar(100) NOT NULL,
+  `useragent` varchar(255) NOT NULL,
+  `ip` varchar(15) NOT NULL,
+  `session_key` varchar(40) NOT NULL,
+  `time_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `time_last_activity` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`session_id`),
+  KEY `username` (`username`),
+  KEY `session_key` (`session_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+";
 
         return $sql;
     }

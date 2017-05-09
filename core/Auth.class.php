@@ -65,6 +65,7 @@ class Auth implements iAuth {
 
     /**
      * 
+     * @return type
      */
     private function getInstanceOfAuthProvider() {
         $isInitializationOfProviderRequired = false;
@@ -222,7 +223,7 @@ class Auth implements iAuth {
 
         $t_error = self::getError();
 
-        if (is_array($t_error) && count($t_error) != array()) {
+        if (is_array($t_error) && $t_error != array()) {
             $error = print_r($t_error, 1);
         }
 
