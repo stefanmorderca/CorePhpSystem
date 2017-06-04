@@ -139,9 +139,9 @@ class Core {
 
     static public function shutdown($die = '') {
         /* @var $request CoreRequest */
-        @$resp = $GLOBALS['request'];
+        $resp = (isset($GLOBALS['request'])) ? $GLOBALS['request'] : '';
         /* @var $core Core */
-        @$core = $GLOBALS['core'];
+        $core = $GLOBALS['core'];
 
         if ($core->isShutdownInitialized) {
             die();
