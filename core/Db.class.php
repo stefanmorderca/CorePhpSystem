@@ -173,7 +173,7 @@ class Db {
                                 $i = 0;
                                 foreach ($t_tmp as $key => $a) {
                                     $ile++;
-                                            
+
                                     $t_row[$i] = $a;
                                     $t_row[$key] = $a;
                                     $i++;
@@ -286,29 +286,29 @@ class Db {
         
     }
 
-    public function insert($table_name, $t_dane, $fl_ignore = 0) {
+    public function insert($table_name, $t_data, $fl_ignore = 0) {
         global $t_mysql_reserverd_words;
 
-        foreach ($t_dane as $a) {
+        foreach ($t_data as $a) {
             if (!is_array($a)) {
-                $t_dane = array($t_dane);
+                $t_data = array($t_data);
                 break;
             }
         }
 
-        if (!is_array($t_dane)) {
-            throw new Exception("DB::insert -> input date must be array (not " . var_dump($t_dane) . ")", E_USER_ERROR);
+        if (!is_array($t_data)) {
+            throw new Exception("DB::insert -> input date must be array (not " . var_dump($t_data) . ")", E_USER_ERROR);
         }
 
-        if (count($t_dane) > 5000) {
+        if (count($t_data) > 5000) {
             throw new Exception("DB::insert -> over 5000 records in this table, are you mad?", E_USER_ERROR);
         }
 
-        if (count($t_dane) == 0) {
+        if (count($t_data) == 0) {
             throw new Exception("DB::insert -> 0 records in this table.", E_USER_ERROR);
         }
 
-        $t_names = array_keys($t_dane[0]);
+        $t_names = array_keys($t_data[0]);
 
         foreach ($t_names as $key) {
             $key = "`" . $key . "`";
@@ -328,7 +328,7 @@ class Db {
         $values_all = '';
         $i = 0;
 
-        foreach ($t_dane as $t_tmp) {
+        foreach ($t_data as $t_tmp) {
             $values = '';
             foreach ($t_tmp as $key => $val) {
                 if ($val !== null) {
@@ -358,11 +358,11 @@ class Db {
         $sql = "INSERT$sql INTO `$table_name` ($names) VALUES " . implode(',', $t_values);
 
         if (strlen($sql) > 1048576) {
-            $end = count($t_dane);
+            $end = count($t_data);
             $half = ($end % 2 ) ? ceil($end / 2) : $end / 2;
 
-            $t_dane_1 = array_slice($t_dane, 0, $half);
-            $t_dane_2 = array_slice($t_dane, $half);
+            $t_dane_1 = array_slice($t_data, 0, $half);
+            $t_dane_2 = array_slice($t_data, $half);
 
             if ($this->insert($table_name, $t_dane_1, $fl_ignore) !== false) {
                 if ($this->insert($table_name, $t_dane_2, $fl_ignore) !== false) {
@@ -376,8 +376,51 @@ class Db {
         return $this->query($sql);
     }
 
-    public function update() {
-        
+    public function update($table_name, $t_data, $where = false, $protected = 0) {
+        if (!isset($t_data) || count($t_data) > 0) {
+            throw new Exception("No data passed for update.");
+        }
+
+        if ($where == false) {
+            throw new Exception("Update on all rows is not allowed");
+        }
+
+        // UPDATE only if row exists and UPDATE only different values
+        if ($protected == 1) {
+            $query = "SELECT * FROM " . $table_name . " WHERE $where";
+            $result = $this->query($query);
+
+            if ($result === false) {
+                throw new Exception("Row for update not found.");
+            }
+
+            foreach ($result as $key => $val_a) {
+                if (key_exists($key, $t_data)) {
+                    $val_b = $t_data[$key];
+                    if ($val_a == $val_b) {
+                        unset($t_data[$key]);
+                    }
+                }
+            }
+        }
+
+        foreach ($t_data as $key => $val) {
+            //if(get_magic_quotes_gpc() == 0) 
+            $val = addslashes($val);
+            if (is_string($val)) {
+                $val = "'$val'";
+            }
+
+            if (!isset($values)) {
+                $values = "`$key` = $val";
+            } else {
+                $values .= ", `$key` = $val";
+            }
+        }
+
+        $query = "UPDATE `" . $table_name . "` SET $values WHERE $where";
+
+        return $this->query($query);
     }
 
     public function switchToDefaultConnection() {
