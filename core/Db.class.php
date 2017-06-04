@@ -286,7 +286,7 @@ class Db {
         
     }
 
-    static public function insert($table_name, $t_dane, $fl_ignore = 0) {
+    public function insert($table_name, $t_dane, $fl_ignore = 0) {
         global $t_mysql_reserverd_words;
 
         foreach ($t_dane as $a) {
@@ -364,8 +364,8 @@ class Db {
             $t_dane_1 = array_slice($t_dane, 0, $half);
             $t_dane_2 = array_slice($t_dane, $half);
 
-            if (self::insert($table_name, $t_dane_1, $fl_ignore) !== false) {
-                if (self::insert($table_name, $t_dane_2, $fl_ignore) !== false) {
+            if ($this->insert($table_name, $t_dane_1, $fl_ignore) !== false) {
+                if ($this->insert($table_name, $t_dane_2, $fl_ignore) !== false) {
                     return true;
                 }
             }
@@ -373,7 +373,7 @@ class Db {
             throw new Exception("DB::insert -> query size too large (" . strlen($sql) . "), are you mad?", E_USER_ERROR);
         }
 
-        return self::query($sql);
+        return $this->query($sql);
     }
 
     public function update() {
