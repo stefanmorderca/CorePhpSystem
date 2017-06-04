@@ -332,7 +332,7 @@ class Db {
             $values = '';
             foreach ($t_tmp as $key => $val) {
                 if ($val !== null) {
-                    $val = mysql_real_escape_string($val);
+                    $val = addslashes($val);
                     if ($values != '') {
                         $values .= ", '" . $val . "'";
                     } else {
@@ -364,8 +364,8 @@ class Db {
             $t_dane_1 = array_slice($t_dane, 0, $half);
             $t_dane_2 = array_slice($t_dane, $half);
 
-            if ($this->insert($table_name, $t_dane_1, $fl_ignore) !== false) {
-                if ($this->insert($table_name, $t_dane_2, $fl_ignore) !== false) {
+            if (self::insert($table_name, $t_dane_1, $fl_ignore) !== false) {
+                if (self::insert($table_name, $t_dane_2, $fl_ignore) !== false) {
                     return true;
                 }
             }
@@ -373,7 +373,7 @@ class Db {
             throw new Exception("DB::insert -> query size too large (" . strlen($sql) . "), are you mad?", E_USER_ERROR);
         }
 
-        return $this->query($sql);
+        return self::query($sql);
     }
 
     public function update() {
