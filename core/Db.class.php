@@ -377,7 +377,7 @@ class Db {
     }
 
     public function update($table_name, $t_data, $where = false, $protected = 0) {
-        if (!isset($t_data) || count($t_data) > 0) {
+        if (!isset($t_data) || !(count($t_data) > 0)) {
             throw new Exception("No data passed for update.");
         }
 
