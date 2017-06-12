@@ -385,7 +385,7 @@ class Db {
             throw new Exception("Update on all rows is not allowed");
         }
 
-        // UPDATE only if row exists and UPDATE only different values
+        // UPDATE only if row exists and limit UPDATE statment to only different values
         if ($protected == 1) {
             $query = "SELECT * FROM " . $table_name . " WHERE $where";
             $result = $this->query($query);

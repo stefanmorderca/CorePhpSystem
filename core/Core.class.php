@@ -92,7 +92,7 @@ class Core {
         }
     }
 
-    public function setResponceHandler() {
+    public function setResponseHandler() {
         
     }
 
@@ -101,8 +101,8 @@ class Core {
      * @param Module $mod
      * @return \CoreRequest
      */
-    public function initModule(Module $mod) {
-        $coreRequest = new CoreRequest($mod);
+    public function initModule(Module $mod, $action = '') {
+        $coreRequest = new CoreRequest($mod, $action);
 
         if ($mod->isAuthRequired()) {
             if ($this->auth == '') {
