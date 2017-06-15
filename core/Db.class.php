@@ -72,6 +72,13 @@ class Db {
         return $dbLowLevel->query($sql, $t_connection);
     }
 
+    /**
+     * 
+     * @param type $sql
+     * @param type $params
+     * @return type
+     * @throws Exception
+     */
     public function query($sql, $params = array()) {
         $fetch = 'assoc';
         $type_of = 0;
@@ -144,6 +151,7 @@ class Db {
         $last_id = $t_res[2];
 
         $ile = 0;
+        
         switch ($type) {
             case 1:
                 $t_time[] = microtime(true);
@@ -283,7 +291,17 @@ class Db {
     }
 
     public function queryKeyValuePairs($sql) {
-        
+        $t_tmp = $this->query($sql);
+
+        $t_keys = array_keys($t_tmp);
+
+        $t_out = array();
+
+        foreach ($t_tmp as $val) {
+            $t_out[$val[$t_keys[0]]] = $val[$t_keys[1]];
+        }
+
+        return $t_out;
     }
 
     public function insert($table_name, $t_data, $fl_ignore = 0) {
@@ -325,11 +343,10 @@ class Db {
         }
 
         $t_values = '';
-        $values_all = '';
-        $i = 0;
 
         foreach ($t_data as $t_tmp) {
             $values = '';
+
             foreach ($t_tmp as $key => $val) {
                 if ($val !== null) {
                     $val = addslashes($val);
@@ -346,6 +363,7 @@ class Db {
                     }
                 }
             }
+
             $t_values[] = '(' . $values . ')';
         }
 
@@ -481,15 +499,11 @@ class Db {
         return $this->config;
     }
 
-    private function logQuery($query, $time_table, $numrows, $latid, $connname) {
-        // $time_start = $time_table[0];
-        // $time_stop = array_pop($time_table);
-        // $time_total = round($time_stop - $time_start, 4);
-
+    private function logQuery($query, $time_table, $numrows, $lastid, $connname) {
         $time_start = $time_table[0];
         $time_stop = $time_table[1];
         $time_end = array_pop($time_table);
-
+        
         $time_tin_db = round($time_stop - $time_start, 4);
         $time_total = round($time_end - $time_start, 4);
 
@@ -508,6 +522,7 @@ class Db {
         $GLOBALS['_DB'][$connname]['log']['queries'][$queries] = array();
         $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['query'] = substr($query, 0, 255);
         $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['numrows'] = $numrows;
+        $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['last_insert_id'] = $lastid;
         $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['time'] = $time_total;
         $GLOBALS['_DB'][$connname]['log']['queries'][$queries]['time_in_db'] = $time_tin_db;
 

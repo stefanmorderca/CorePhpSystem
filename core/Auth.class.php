@@ -6,7 +6,6 @@ require_once('Auth/AuthListner.interface.php');
 require_once('Auth/AuthProviderGoogle.class.php');
 require_once('Auth/AuthProviderLocalPhpFile.class.php');
 require_once('Auth/AuthProviderPhpVariable.class.php');
-require_once('Auth/AuthProviderPhpVariable.class.php');
 require_once('Auth/AuthSessionManager.class.php');
 
 /**
