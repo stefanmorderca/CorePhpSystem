@@ -49,8 +49,8 @@ class CoreRequest {
 
         if (!empty($_POST)) {
             $this->httpMethod = 'POST';
-            @$this->action->post = ($this->isAjax) ? $this->action->ajax : $this->action->name;
-            @$this->action->name = 'ValidateForm';
+            $this->action->post = ($this->isAjax) ? $this->action->ajax : $this->action->name;
+            $this->action->name = 'ValidateForm';
         }
     }
 
