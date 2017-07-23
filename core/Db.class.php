@@ -283,12 +283,17 @@ class Db {
     }
 
     public function queryOneRow($sql, $params = array()) {
-        return array_pop($this->query($sql, $params));
+        $result = $this->query($sql, $params);
+        $returnMe = array_pop($result);
+        
+        return $returnMe;
     }
 
     public function querySingleColumn($sql, $params = array()) {
-        return array_pop($this->queryOneRow($sql, $params));
-    }
+        $result = $this->queryOneRow($sql, $params);
+        $returnMe = array_pop($result);
+        
+        return $returnMe;    }
 
     public function queryKeyValuePairs($sql) {
         $t_tmp = $this->query($sql);
