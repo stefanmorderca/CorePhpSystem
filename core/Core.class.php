@@ -152,6 +152,7 @@ class Core {
         if ($core->onShutdownListner !== '') {
             try {
                 $core->onShutdownListner->OnShutdown($die);
+                die();
             } catch (Exception $exc) {
                 Logger::fatal($exc->getMessage());
                 
