@@ -150,7 +150,12 @@ class Core {
         $core->isShutdownInitialized = true;
 
         if ($core->onShutdownListner !== '') {
-            $core->onShutdownListner->OnShutdown($die);
+            try {
+                $core->onShutdownListner->OnShutdown($die);
+            } catch (Exception $exc) {
+                print_r($exc);
+            }
+
             die();
         }
 
