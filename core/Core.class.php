@@ -153,10 +153,8 @@ class Core {
             try {
                 $core->onShutdownListner->OnShutdown($die);
             } catch (Exception $exc) {
-                print_r($exc);
+                Logger::fatal($exc->getMessage());
             }
-
-            die();
         }
 
         print_r($resp);
