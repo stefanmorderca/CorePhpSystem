@@ -49,10 +49,10 @@ class CoreRequest {
             $t_log[] = 'No such an action [' . $action . '], switching to default.';
         }
 
-        if (is_object($action) && get_class($action) == "Action") {
+        if (is_object($action) && get_class($action) == "ModuleAction") {
             $this->action = $action;
         } else {
-            $this->action = new Action($actionName);
+            $this->action = new ModuleAction($actionName);
         }
 
         if ($this->isAjax) {
