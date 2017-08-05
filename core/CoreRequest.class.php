@@ -23,17 +23,36 @@ class CoreRequest {
      */
     var $httpMethod = "GET";
     var $module;
+
+    /**
+     *
+     * @var ModuleAction 
+     */
     var $action;
     var $itemId;
     var $t_log = array();
 
     public function __construct(Module $module, $action = '') {
-        $this->isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') ? true : false;
-        $this->action = ($module->isInActionList($action)) ? $action : $module->actionDefault;
+        $actionName = '';
+
         $this->module = $module->filename;
 
-        if ($this->action != '' && !$module->isInActionList($action)) {
+        $this->isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') ? true : false;
+
+        if (is_string($action)) {
+            $actionName = ($module->isInActionList($action)) ? $action : $module->actionDefault;
+        } else {
+            $actionName = $action->name;
+        }
+
+        if ($actionName != '' && !$module->isInActionList($action)) {
             $t_log[] = 'No such an action [' . $action . '], switching to default.';
+        }
+
+        if (is_object($action) && get_class($action) == "Action") {
+            $this->action = $action;
+        } else {
+            $this->action = new Action($actionName);
         }
 
         if ($this->isAjax) {
