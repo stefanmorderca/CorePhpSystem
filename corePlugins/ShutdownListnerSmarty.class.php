@@ -45,17 +45,18 @@ class SmartyShutdonwListner implements OnShutdownListner {
         $templateVars = $this->config->globalVaraviableNameToAssign;
 
         global $$templateVars;
-        
+
         $t_assign = $$templateVars;
+
+        if (isset($t_assign['isJson'])) {
+            $isJson = $t_assign['isJson'];
+            unset($t_assign['isJson']);
+        }
 
         if (is_array($t_assign)) {
             foreach ($t_assign as $key => $val) {
                 $this->smarty->assign($key, $val);
             }
-        }
-        
-        if(isset($t_assign['isJson'])){
-            $isJson = $t_assign['isJson'];
         }
 
         if (isset($smarty_display) && $smarty_display != '') {
@@ -70,6 +71,12 @@ class SmartyShutdonwListner implements OnShutdownListner {
                 $this->smarty->display($smarty_display);
             }
         } else {
+            if ($isJson === true) {
+                header('Content-Type: application/json');
+                $json = json_encode($t_assign);
+                die($json);
+            }
+
             $this->smarty->display('index.html');
         }
     }
