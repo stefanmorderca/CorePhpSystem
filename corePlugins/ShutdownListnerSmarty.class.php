@@ -52,8 +52,8 @@ class SmartyShutdonwListner implements OnShutdownListner {
             }
         }
         
-        if(isset($$templateVars->isJson)){
-            $isJson = $$templateVars->isJson;
+        if(isset($$templateVars['isJson'])){
+            $isJson = $$templateVars['isJson'];
         }
 
         if (isset($smarty_display) && $smarty_display != '') {
