@@ -45,15 +45,17 @@ class SmartyShutdonwListner implements OnShutdownListner {
         $templateVars = $this->config->globalVaraviableNameToAssign;
 
         global $$templateVars;
+        
+        $t_assign = $$templateVars;
 
-        if (isset($$templateVars) && is_array($$templateVars)) {
-            foreach ($$templateVars as $key => $val) {
+        if (is_array($t_assign)) {
+            foreach ($t_assign as $key => $val) {
                 $this->smarty->assign($key, $val);
             }
         }
         
-        if(isset($$templateVars['isJson'])){
-            $isJson = $$templateVars['isJson'];
+        if(isset($t_assign['isJson'])){
+            $isJson = $t_assign['isJson'];
         }
 
         if (isset($smarty_display) && $smarty_display != '') {
